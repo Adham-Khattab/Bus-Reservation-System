@@ -1,0 +1,144 @@
+/* Feedback page — page-specific styles only. Do not put header/footer rules here. */
+
+.feedback-card {
+    background: var(--color-white);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px var(--color-card-shadow);
+    padding: 40px 48px 44px;
+    max-width: 460px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #EFEFEF;
+}
+
+.feedback-card h1 {
+    color: var(--color-accent);
+    font-size: 22px;
+    margin: 0 0 28px;
+}
+
+.rating-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.rating-option {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+    border-radius: 8px;
+    transition: transform 0.1s ease;
+}
+
+.rating-option:hover {
+    transform: translateY(-2px);
+}
+
+.rating-option svg circle.face-outline {
+    stroke: var(--color-text);
+    fill: none;
+    stroke-width: 2.5;
+    transition: stroke 0.15s ease, fill 0.15s ease;
+}
+
+.rating-option svg .face-feature {
+    stroke: var(--color-text);
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+.rating-option svg ellipse.face-feature,
+.rating-option svg .excellent-mouth {
+    fill: var(--color-text);
+    stroke: none;
+}
+
+.rating-option span {
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+.rating-option.selected svg circle.face-outline {
+    fill: var(--color-accent);
+    stroke: var(--color-accent);
+}
+
+.rating-option.selected svg .face-feature {
+    stroke: var(--color-white);
+}
+
+.rating-option.selected svg ellipse.face-feature,
+.rating-option.selected svg .excellent-mouth {
+    fill: var(--color-white);
+    stroke: none;
+}
+
+.rating-option.selected span {
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.rating-option:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.feedback-card label.suggestion-label {
+    display: block;
+    text-align: left;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--color-text);
+}
+
+.feedback-card textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1.5px solid var(--color-text);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: var(--font-base);
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 26px;
+}
+
+.feedback-card textarea:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+}
+
+.feedback-status {
+    font-size: 13px;
+    margin-top: 14px;
+    min-height: 18px;
+}
+
+.feedback-status.success {
+    color: #1E9E4A;
+}
+
+.feedback-status.error {
+    color: #D33;
+}
+
+@media (max-width: 520px) {
+    .feedback-card {
+        padding: 28px 20px 32px;
+    }
+    .rating-row {
+        gap: 2px;
+    }
+    .rating-option svg {
+        width: 42px;
+        height: 42px;
+    }
+}

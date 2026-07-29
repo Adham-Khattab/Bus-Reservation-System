@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback — All For One Group</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="feedback.css">
+</head>
+<body>
+
+<header class="site-header">
+    <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img">
+    </a>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Booking Calendar</a>
+        <a href="#">Trip history</a>
+        <a href="lostfound.html">Lost &amp; found</a>
+    </nav>
+    <div class="header-right">
+        <span>English</span>
+        <span aria-hidden="true">&#128100;</span>
+    </div>
+</header>
+
+<main class="page-main">
+    <section class="feedback-card">
+        <h1>We want to hear your feedback!</h1>
+
+        <div class="rating-row" role="radiogroup" aria-label="Rate your experience">
+            <button type="button" class="rating-option" data-value="1" data-label="Bad" role="radio" aria-checked="false">
+                <svg width="48" height="48" viewBox="0 0 48 48">
+                    <circle class="face-outline" cx="24" cy="24" r="21"/>
+                    <circle class="face-feature" cx="16" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle class="face-feature" cx="32" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <ellipse class="face-feature" cx="24" cy="32" rx="5" ry="7"/>
+                </svg>
+                <span>Bad</span>
+            </button>
+            <button type="button" class="rating-option" data-value="2" data-label="Poor" role="radio" aria-checked="false">
+                <svg width="48" height="48" viewBox="0 0 48 48">
+                    <circle class="face-outline" cx="24" cy="24" r="21"/>
+                    <circle class="face-feature" cx="16" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle class="face-feature" cx="32" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <path class="face-feature" d="M16 32 Q24 27 32 32"/>
+                </svg>
+                <span>Poor</span>
+            </button>
+            <button type="button" class="rating-option" data-value="3" data-label="Average" role="radio" aria-checked="false">
+                <svg width="48" height="48" viewBox="0 0 48 48">
+                    <circle class="face-outline" cx="24" cy="24" r="21"/>
+                    <circle class="face-feature" cx="16" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle class="face-feature" cx="32" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <path class="face-feature" d="M16 30 L32 30"/>
+                </svg>
+                <span>Average</span>
+            </button>
+            <button type="button" class="rating-option" data-value="4" data-label="Good" role="radio" aria-checked="false">
+                <svg width="48" height="48" viewBox="0 0 48 48">
+                    <circle class="face-outline" cx="24" cy="24" r="21"/>
+                    <circle class="face-feature" cx="16" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle class="face-feature" cx="32" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <path class="face-feature" d="M16 28 Q24 34 32 28"/>
+                </svg>
+                <span>Good</span>
+            </button>
+            <button type="button" class="rating-option" data-value="5" data-label="Excellent" role="radio" aria-checked="false">
+                <svg width="48" height="48" viewBox="0 0 48 48">
+                    <circle class="face-outline" cx="24" cy="24" r="21"/>
+                    <circle class="face-feature" cx="16" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle class="face-feature" cx="32" cy="19" r="1.6" fill="currentColor" stroke="none"/>
+                    <path class="face-feature excellent-mouth" d="M14 27 Q24 40 34 27 Q24 33 14 27 Z"/>
+                </svg>
+                <span>Excellent</span>
+            </button>
+        </div>
+
+        <label class="suggestion-label" for="suggestion">Do you have any suggestions?</label>
+        <textarea id="suggestion" placeholder=""></textarea>
+
+        <button type="button" class="btn-primary" id="submitBtn">Submit</button>
+        <div class="feedback-status" id="statusMsg" role="status" aria-live="polite"></div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img">
+    </a>
+    <div class="footer-links">
+        <a href="feedback.html">Feedback</a>
+        <a href="#">Reviews</a>
+        <a href="faq.html">FAQs</a>
+        <a href="report.html">Report</a>
+    </div>
+</footer>
+
+<script src="feedback.js"></script>
+</body>
+</html>

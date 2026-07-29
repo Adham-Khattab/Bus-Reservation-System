@@ -1,0 +1,204 @@
+.lostfound-main {
+    display: block;
+    max-width: none;
+    padding: 40px 40px 60px;
+}
+
+.lostfound-title {
+    display: inline-block;
+    background: var(--color-accent);
+    color: var(--color-white);
+    font-size: 22px;
+    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 999px;
+    margin: 0 0 32px;
+}
+
+.lostfound-row {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+}
+
+.lostfound-card {
+    flex: 0 0 200px;
+    height: 260px;
+    border-radius: var(--radius);
+    background: var(--color-bar);
+    box-shadow: 0 4px 12px var(--color-card-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- Filled item card (same grey square look) --- */
+.lostfound-card.filled {
+    background: var(--color-bar);
+    padding: 10px;
+}
+
+.lostfound-card.filled .item-photo {
+    flex: 1;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #E0E0E0;
+}
+
+.lostfound-card.filled .item-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.lostfound-card.filled .item-info {
+    padding-top: 10px;
+    font-size: 13px;
+    color: var(--color-text);
+    line-height: 1.5;
+}
+
+.lostfound-card.filled .item-info strong {
+    font-weight: 600;
+}
+
+/* --- Upload slot card --- */
+.lostfound-card.upload-slot {
+    border: 2px dashed #9A9A9A;
+    background: var(--color-bar);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px 20px;
+    cursor: pointer;
+}
+
+.upload-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--color-text);
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.upload-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.upload-hint {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+}
+
+.upload-error {
+    color: #D64545;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+    .lostfound-main {
+        padding: 28px 20px 40px;
+    }
+}
+
+/* ================= Modal ================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.modal-overlay[hidden] {
+    display: none;
+}
+
+.modal-card {
+    background: var(--color-white);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px var(--color-card-shadow);
+    padding: 40px 40px 36px;
+    max-width: 420px;
+    width: 100%;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.modal-card h2 {
+    color: var(--color-accent);
+    font-size: 26px;
+    text-align: center;
+    margin: 0 0 24px;
+}
+
+.modal-label {
+    display: block;
+    font-size: 13px;
+    color: var(--color-text);
+    margin: 16px 0 6px;
+}
+
+.modal-input {
+    width: 100%;
+    border: 2px solid var(--color-text);
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--color-text);
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.modal-upload-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 2px dashed #9A9A9A;
+    border-radius: 20px;
+    padding: 20px;
+    cursor: pointer;
+    background: var(--color-bar);
+}
+
+.modal-preview {
+    margin-top: 14px;
+    width: 100%;
+    max-height: 140px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.modal-submit-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 26px;
+}
