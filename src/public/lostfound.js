@@ -23,9 +23,14 @@
     return div.innerHTML;
   }
 
-  function renderFilledCard(item) {
+function renderFilledCard(item) {
+    const photoHtml = item.photoUrl
+      ? `<div class="item-photo"><img src="${item.photoUrl}" alt="${escapeHtml(item.description)}"></div>`
+      : '';
+
     return `
             <div class="lostfound-card upload-slot filled">
+                ${photoHtml}
                 <div class="item-info">
                     <div><strong>Item-description:</strong> ${escapeHtml(item.description)}</div>
                     <div><strong>Bus Number:</strong> ${escapeHtml(item.busNumber)}</div>
@@ -85,8 +90,6 @@
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) closeModal();
   });
-
-  uploadBox.addEventListener("click", () => fileInput.click());
 
   fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
@@ -158,6 +161,7 @@
         activeCard.outerHTML = renderFilledCard({
           description: savedItem.description,
           busNumber: savedItem.bus_number,
+          photoUrl: savedItem.photo_url
         });
         bindUploadSlots();
       }

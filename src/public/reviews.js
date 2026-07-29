@@ -1,29 +1,11 @@
 (() => {
     const gridEl = document.getElementById('reviewsGrid');
 
-    const STARS = '<span class="star">&#9733;</span>'.repeat(5);
-
-    const reviews = [
-        {
-            user_name: "Sarah Johnson",
-            photo: "images/person1.jpg",
-            message: "An exceptional corporate transit solution."
-        },
-        {
-            user_name: "Michael Chen",
-            photo: "images/person2.jpg",
-            message: "Exemplary accountability and customer care."
-        },
-        {
-            user_name: "Emma Davis",
-            photo: "images/person3.jpg",
-            message: "A reliable service that enhances the daily workplace experience."
-        },
-        {
-            user_name: "James Wilson",
-            photo: "images/person4.jpg",
-            message: "Highly efficient and accommodating for professional guests."
-        }
+    const PHOTOS = [
+        'images/person1.jpg',
+        'images/person2.jpg',
+        'images/person3.jpg',
+        'images/person4.jpg'
     ];
 
     function escapeHtml(str) {
@@ -32,37 +14,52 @@
         return div.innerHTML;
     }
 
-    function initials(name) {
-        if (!name || name.toLowerCase() === 'anonymous') return '?';
-        return name
-            .split(' ')
-            .filter(Boolean)
-            .slice(0, 2)
-            .map(n => n[0].toUpperCase())
-            .join('');
+    function starsFor(rating) {
+        const full = '<span class="star">&#9733;</span>'.repeat(rating);
+        const empty = '<span class="star" style="opacity:0.3">&#9733;</span>'.repeat(5 - rating);
+        return full + empty;
     }
 
-    function renderReviews() {
+    async function loadReviews() {
+        try {
+            const res = await fetch('/api/feedback');
+            if (!res.ok) throw new Error('Failed to load reviews');
+
+            const feedback = await res.json();
+            const recent = feedback.slice(0, 4);
+
+            renderReviews(recent);
+        } catch (err) {
+            gridEl.innerHTML = '<p class="reviews-empty">Could not load reviews right now.</p>';
+            console.error('Error loading reviews:', err.message);
+        }
+    }
+
+    function renderReviews(reviews) {
         if (!reviews.length) {
-            gridEl.innerHTML = '<p class="reviews-empty">No 5-star reviews yet.</p>';
+            gridEl.innerHTML = '<p class="reviews-empty">No reviews yet.</p>';
             return;
         }
 
-        gridEl.innerHTML = reviews.map(f => {
-            const fallback = initials(f.user_name);
+        gridEl.innerHTML = reviews.map((f, i) => {
+            const quote = f.suggestion && f.suggestion.trim()
+                ? f.suggestion
+                : 'Great experience overall!';
+
+            const photo = PHOTOS[i % PHOTOS.length];
 
             return `
                 <div class="review-item">
                     <div class="review-avatar">
-                        <img src="${f.photo}" alt="${escapeHtml(f.user_name || 'Customer')}"
-                             onerror="this.replaceWith(Object.assign(document.createElement('span'), {textContent: '${fallback}'}))">
+                        <img src="${photo}" alt="Customer photo"
+                             onerror="this.replaceWith(Object.assign(document.createElement('span'), {textContent: '?'}))">
                     </div>
-                    <div class="review-stars" aria-label="5 out of 5 stars">${STARS}</div>
-                    <p class="review-quote">"${escapeHtml(f.message)}"</p>
+                    <div class="review-stars" aria-label="${f.rating} out of 5 stars">${starsFor(f.rating)}</div>
+                    <p class="review-quote">"${escapeHtml(quote)}"</p>
                 </div>
             `;
         }).join('');
     }
 
-    renderReviews();
+    loadReviews();
 })();
