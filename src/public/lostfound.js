@@ -133,14 +133,18 @@
     }
 
     try {
+      const formData = new FormData();
+
+      formData.append("description", name);
+      formData.append("bus_number", busNumber);
+
+      if (pendingFile) {
+        formData.append("photo", pendingFile);
+      }
+
       const res = await fetch("/api/lost-found", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          description: name,
-          bus_number: busNumber,
-          photo_url: null,
-        }),
+        body: formData,
       });
 
       if (!res.ok) {
