@@ -3,72 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-         <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
+    <title>Trip History — All For One Group</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="./trip-history.css"/>
-
 </head>
 <body>
-           <header class="navbar">
 
-        <div class="logo">
-            <img src="./images/logo.png " alt="logo"/>
-        </div>
+<header class="site-header">
+    <a href="Dashboard.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img">
+    </a>
+    <nav>
+        <a href="Dashboard.html">Home</a>
+        <a href="calendar.html">Booking Calendar</a>
+        <a href="trip-history.html" class="active">Trip history</a>
+        <a href="lost-found.html">Lost &amp; found</a>
+    </nav>
+    <div class="header-right">
+        <span>English</span>
+        <span aria-hidden="true">&#128100;</span>
+    </div>
+</header>
 
-        <nav>
-            <a href="#">Home</a>
-            <a href="#" class="active">Booking Calendar</a>
-            <a href="#" >Trip History</a>
-            <a href="#">Lost & Found</a>
-        </nav>
-
-        <div class="profile">
-            <span>English</span>
-            <i class="fa-solid fa-user"></i>
-        </div>
-    </header>
-            <section class="search">
-
-        <div class="search-box">
-
-            <input type="text"
-            placeholder="Search trip...">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-        </div>
-
-    </section>
-
-    <section class="trip-container" id="tripContainer">
-
+<section class="search">
+    <div class="search-box">
+        <input type="text" placeholder="Search trip...">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
 </section>
 
-    <footer>
+<section class="trip-container" id="tripContainer"></section>
 
-        <div class="footer-logo">
+<footer class="site-footer">
+    <a href="Dashboard.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img">
+    </a>
+    <div class="footer-links">
+        <a href="feedback.html">Feedback</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="faq.html">FAQs</a>
+        <a href="report.html">Report</a>
+    </div>
+</footer>
 
-            <img src="images/logo.png">
-
-    
-        </div>
-
-        <div class="footer-links">
-
-            <a href="#">Feedback</a>
-            <a href="#">Reviews</a>
-            <a href="#">FAQs</a>
-            <a href="#">Report</a>
-
-        </div>
-
-    </footer>
-    <script src="https://kit.fontawesome.com/your-kit.js"></script>
-
+<script src="https://kit.fontawesome.com/your-kit.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-
 <script src="./trip-history.js"></script>
 </body>
 </html>
