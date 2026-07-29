@@ -2,7 +2,7 @@
     const submitBtn = document.getElementById('reportSubmit');
     const textarea = document.getElementById('reportText');
 
-    submitBtn.addEventListener('click', () => {
+    submitBtn.addEventListener('click', async () => {
         const value = textarea.value.trim();
 
         if (!value) {
@@ -10,13 +10,31 @@
             return;
         }
 
-        // Placeholder: replace with your actual submit logic (fetch/POST etc.)
-        console.log('Report submitted:', value);
+        submitBtn.disabled = true;
+        const originalText = submitBtn.textContent;
 
-        textarea.value = '';
-        submitBtn.textContent = 'Submitted!';
-        setTimeout(() => {
-            submitBtn.textContent = 'Submit';
-        }, 2000);
+        try {
+            const res = await fetch('/api/report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: value })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error || 'Something went wrong');
+            }
+
+            textarea.value = '';
+            submitBtn.textContent = 'Submitted!';
+        } catch (err) {
+            submitBtn.textContent = 'Failed — try again';
+            console.error('Error submitting report:', err.message);
+        } finally {
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        }
     });
 })();
