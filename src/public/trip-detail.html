@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Details</title>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="trip-detail.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            <img src="./images/logo.png" alt="logo"/>
+           
+        </div>
+
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Booking Calendar</a>
+            <a href="#" >Trip History</a>
+            <a href="#">Lost & Found</a>
+        </nav>
+
+        <div class="profile">
+            <span>English</span>
+            <i class="fa-solid fa-user"></i>
+        </div>
+
+    </header>
+
+    <section class="title">
+
+        <h1>Trip Details</h1>
+
+    </section>
+
+    <section class="trip-summary">
+
+        <div class="item">
+
+            <div class="icon-title">
+                <i class="fa-regular fa-calendar"></i>
+                <p>Date</p>
+            </div>
+
+            <div class="value" id="tripDate"></div>   <!--depends on user DB -->   
+
+        </div>
+
+        <div class="item">
+
+            <div class="icon-title">
+                <i class="fa-regular fa-clock"></i>
+                <p>Time</p>
+            </div>
+
+            <div class="value" id="tripTime"></div> <!--depends on user DB -->
+
+        </div>
+
+        <div class="item">
+
+            <div class="icon-title">
+                <i class="fa-solid fa-location-dot"></i>
+                <p>Pick-up</p>
+            </div>
+
+            <div class="value" id="pickup"></div>  <!--depends on user DB -->
+
+        </div>
+
+        <div class="item">
+
+            <div class="icon-title">
+                <i class="fa-solid fa-route"></i>
+                <p>Drop-off</p>
+            </div>
+
+            <div class="value" id="dropoff"></div>    <!--depends on user DB -->
+  
+        </div>
+
+    </section>
+
+
+    <section class="driver-details">
+
+        <div class="row">
+
+            <div class="left">
+
+                <i class="fa-solid fa-user"></i>
+
+                <div>
+
+                    <h3>Driver's Name</h3>
+
+                    <p>Driver assigned to your route</p>
+
+                </div>
+
+            </div>
+
+            <div class="right" id="driverName"></div>   <!--depends on user DB -->
+
+        </div>
+
+      
+
+        <div class="row">
+
+            <div class="left">
+
+                <i class="fa-solid fa-phone"></i>
+
+                <div>
+
+                    <h3>Driver's Number</h3>
+
+                    <p>Contact your driver directly</p>
+
+                </div>
+
+            </div>
+
+            <div class="right" id="driverPhone"></div>  <!--depends on user DB -->
+
+        </div>
+
+       
+
+        <div class="row">
+
+            <div class="left">
+
+                <i class="fa-solid fa-bus"></i>
+
+                <div>
+
+                    <h3>Bus Number</h3>
+
+                    <p>Your assigned bus</p>
+
+                </div>
+
+            </div>
+
+            <div class="right" id="busNumber"></div>  <!--depends on user DB -->
+
+        </div>
+
+        <div class="row">
+
+            <div class="left">
+
+                <i class="fa-solid fa-chair"></i>
+
+                <div>
+
+                    <h3>Seat Number</h3>
+
+                    <p>Your assigned seat</p>
+
+                </div>
+
+            </div>
+
+            <div class="right" id="seatNumber"></div>  <!--depends on user DB -->
+
+        </div>
+
+    </section>
+
+
+    <section class="buttons">
+
+        <button id="cancelBtn">Cancel Trip</button>
+
+        <button id="rescheduleBtn">Reschedule</button>
+
+    </section>
+
+
+    <footer>
+
+        <div class="footer-logo">
+<img src="./images/logo.png" alt="logo"/>
+
+        </div>
+
+        <div class="footer-links">
+
+            <a href="#">Feedback</a>
+
+            <a href="#">Reviews</a>
+
+            <a href="#">FAQs</a>
+
+            <a href="#">Report</a>
+
+        </div>
+
+    </footer>
+    <script src="trip-detail.js"></script>
+
+</body>
+</html>
