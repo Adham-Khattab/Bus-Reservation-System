@@ -1,16 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const router = require('express').Router();
+const express = require("express");
+const router = express.Router();
 
-fs.readdirSync(__dirname)
-    .filter(file => file !== 'index.js' && file.endsWith('.js'))
-    .forEach(file => {
-        const routeModule = require(path.join(__dirname, file));
-        const name = '/' + file
-            .replace('Routes.js', '')
-            .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-            .toLowerCase();
-        router.use(name, routeModule);
-    });
+console.log("✅ routes/index.js loaded");
+
+// Explicitly mount lostFoundRoutes.js at /lost-found
+router.use("/lost-found", require("./lostFoundRoutes"));
+router.use("/feedback", require("./feedbackRoutes"));
 
 module.exports = router;
