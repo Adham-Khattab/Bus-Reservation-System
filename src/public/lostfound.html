@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost &amp; Found — All For One Group</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="lostfound.css">
+</head>
+<body>
+
+<header class="site-header">
+    <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img">
+    </a>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Booking Calendar</a>
+        <a href="#">Trip history</a>
+        <a href="lostfound.html" class="active">Lost &amp; found</a>
+    </nav>
+    <div class="header-right">
+        <span>English</span>
+        <span aria-hidden="true">&#128100;</span>
+    </div>
+</header>
+
+<main class="page-main lostfound-main">
+    <h1 class="lostfound-title">Lost &amp; found items</h1>
+    <div class="lostfound-row" id="lostfoundRow"></div>
+</main>
+
+<footer class="site-footer">
+    <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img">
+    </a>
+    <div class="footer-links">
+        <a href="feedback.html">Feedback</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="faq.html">FAQs</a>
+        <a href="report.html">Report</a>
+    </div>
+</footer>
+
+<script src="lostfound.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost &amp; Found — All For One Group</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="lostfound.css">
+</head>
+<body>
+
+<header class="site-header">
+    <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img">
+    </a>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Booking Calendar</a>
+        <a href="#">Trip history</a>
+        <a href="lostfound.html" class="active">Lost &amp; found</a>
+    </nav>
+    <div class="header-right">
+        <span>English</span>
+        <span aria-hidden="true">&#128100;</span>
+    </div>
+</header>
+
+<main class="page-main lostfound-main">
+    <h1 class="lostfound-title">Lost &amp; found items</h1>
+    <div class="lostfound-row" id="lostfoundRow"></div>
+</main>
+
+<footer class="site-footer">
+    <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img">
+    </a>
+    <div class="footer-links">
+        <a href="feedback.html">Feedback</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="faq.html">FAQs</a>
+        <a href="report.html">Report</a>
+    </div>
+</footer>
+
+<div class="modal-overlay" id="uploadModalOverlay" hidden>
+    <div class="modal-card">
+        <button class="modal-close" id="uploadModalClose" aria-label="Close">&times;</button>
+        <h2>Upload item</h2>
+
+        <label class="modal-label" for="itemNameInput">Item name</label>
+        <input type="text" id="itemNameInput" class="modal-input" placeholder="e.g. Water bottle">
+
+        <label class="modal-label" for="busNumberInput">Bus number</label>
+        <input type="text" id="busNumberInput" class="modal-input" placeholder="e.g. 12">
+
+        <label class="modal-label" for="modalFileInput">Photo</label>
+        <label class="modal-upload-box" id="modalUploadBox" for="modalFileInput">
+            <span class="upload-label">
+                Upload item:
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 16V4M12 4L7 9M12 4L17 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span class="upload-hint">Images must be in JPG or PNG format and not exceed 5 MB.</span>
+            <img class="modal-preview" id="modalPreview" hidden alt="Preview">
+        </label>
+        <input type="file" id="modalFileInput" accept="image/jpeg,image/png" hidden>
+        <p class="upload-error" id="modalError" hidden></p>
+
+        <div class="modal-submit-row">
+            <button class="btn-primary" id="modalSubmit">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script src="lostfound.js"></script>
+</body>
+</html>

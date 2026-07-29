@@ -1,13 +1,9 @@
-const express = require('express');
+const express = require("express");
+const path = require("path");
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-
-// Test route
-app.get('/', (req, res) => {
-    res.send('Bus Reservation System API is running');
-});
+// Serve static files from the src/public folder
+app.use(express.static(path.join(__dirname, "public")));
 
 module.exports = app;
