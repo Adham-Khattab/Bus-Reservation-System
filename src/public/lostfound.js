@@ -138,8 +138,8 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           description: name,
-          busNumber: busNumber,
-          photoUrl: null,
+          bus_number: busNumber,
+          photo_url: null,
         }),
       });
 
