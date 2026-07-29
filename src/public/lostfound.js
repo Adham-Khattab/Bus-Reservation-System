@@ -1,30 +1,30 @@
 (() => {
-    const rowEl = document.getElementById('lostfoundRow');
-    const overlay = document.getElementById('uploadModalOverlay');
-    const closeBtn = document.getElementById('uploadModalClose');
-    const itemNameInput = document.getElementById('itemNameInput');
-    const busNumberInput = document.getElementById('busNumberInput');
-    const fileInput = document.getElementById('modalFileInput');
-    const uploadBox = document.getElementById('modalUploadBox');
-    const preview = document.getElementById('modalPreview');
-    const errorEl = document.getElementById('modalError');
-    const submitBtn = document.getElementById('modalSubmit');
+  const rowEl = document.getElementById("lostfoundRow");
+  const overlay = document.getElementById("uploadModalOverlay");
+  const closeBtn = document.getElementById("uploadModalClose");
+  const itemNameInput = document.getElementById("itemNameInput");
+  const busNumberInput = document.getElementById("busNumberInput");
+  const fileInput = document.getElementById("modalFileInput");
+  const uploadBox = document.getElementById("modalUploadBox");
+  const preview = document.getElementById("modalPreview");
+  const errorEl = document.getElementById("modalError");
+  const submitBtn = document.getElementById("modalSubmit");
 
-    const items = [];
+  const items = [];
 
-    const MAX_SIZE_MB = 5;
-    const NUM_UPLOAD_SLOTS = 10;
-    let pendingFile = null;
-    let activeCard = null;
+  const MAX_SIZE_MB = 5;
+  const NUM_UPLOAD_SLOTS = 10;
+  let pendingFile = null;
+  let activeCard = null;
 
-    function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
 
-    function renderFilledCard(item) {
-        return `
+  function renderFilledCard(item) {
+    return `
             <div class="lostfound-card upload-slot filled">
                 <div class="item-info">
                     <div><strong>Item-description:</strong> ${escapeHtml(item.description)}</div>
@@ -32,10 +32,10 @@
                 </div>
             </div>
         `;
-    }
+  }
 
-    function renderUploadSlot(index) {
-        return `
+  function renderUploadSlot(index) {
+    return `
             <div class="lostfound-card upload-slot" data-index="${index}">
                 <span class="upload-label">
                     Upload item:
@@ -47,98 +47,123 @@
                 <p class="upload-hint">Images must be in JPG or PNG format and not exceed ${MAX_SIZE_MB} MB.</p>
             </div>
         `;
+  }
+
+  function bindUploadSlots() {
+    rowEl.querySelectorAll(".upload-slot:not(.filled)").forEach((card) => {
+      card.addEventListener("click", () => openModal(card));
+    });
+  }
+
+  function render() {
+    const filledHtml = items.map(renderFilledCard).join("");
+    const uploadHtml = Array.from({ length: NUM_UPLOAD_SLOTS }, (_, i) =>
+      renderUploadSlot(i),
+    ).join("");
+    rowEl.innerHTML = filledHtml + uploadHtml;
+    bindUploadSlots();
+  }
+
+  function openModal(card) {
+    activeCard = card;
+    itemNameInput.value = "";
+    busNumberInput.value = "";
+    fileInput.value = "";
+    preview.hidden = true;
+    preview.src = "";
+    errorEl.hidden = true;
+    pendingFile = null;
+    overlay.hidden = false;
+  }
+
+  function closeModal() {
+    overlay.hidden = true;
+    activeCard = null;
+  }
+
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  uploadBox.addEventListener("click", () => fileInput.click());
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    errorEl.hidden = true;
+
+    if (!file) return;
+
+    const validTypes = ["image/jpeg", "image/png"];
+    const maxBytes = MAX_SIZE_MB * 1024 * 1024;
+
+    if (!validTypes.includes(file.type)) {
+      errorEl.textContent = "Please upload a JPG or PNG image.";
+      errorEl.hidden = false;
+      fileInput.value = "";
+      pendingFile = null;
+      return;
     }
 
-    function bindUploadSlots() {
-        rowEl.querySelectorAll('.upload-slot:not(.filled)').forEach(card => {
-            card.addEventListener('click', () => openModal(card));
+    if (file.size > maxBytes) {
+      errorEl.textContent = `File exceeds ${MAX_SIZE_MB} MB.`;
+      errorEl.hidden = false;
+      fileInput.value = "";
+      pendingFile = null;
+      return;
+    }
+
+    pendingFile = file;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      preview.src = evt.target.result;
+      preview.hidden = false;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  submitBtn.addEventListener("click", async () => {
+    const name = itemNameInput.value.trim();
+    const busNumber = busNumberInput.value.trim();
+
+    if (!name || !busNumber) {
+      errorEl.textContent = "Please fill in all fields.";
+      errorEl.hidden = false;
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/lost-found", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          description: name,
+          busNumber: busNumber,
+          photoUrl: null,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to save item.");
+      }
+
+      const savedItem = await res.json();
+
+      if (activeCard) {
+        activeCard.outerHTML = renderFilledCard({
+          description: savedItem.description,
+          busNumber: savedItem.bus_number,
         });
-    }
-
-    function render() {
-        const filledHtml = items.map(renderFilledCard).join('');
-        const uploadHtml = Array.from({ length: NUM_UPLOAD_SLOTS }, (_, i) => renderUploadSlot(i)).join('');
-        rowEl.innerHTML = filledHtml + uploadHtml;
         bindUploadSlots();
+      }
+      closeModal();
+    } catch (err) {
+      errorEl.textContent =
+        err.message || "Something went wrong. Please try again.";
+      errorEl.hidden = false;
     }
+  });
 
-    function openModal(card) {
-        activeCard = card;
-        itemNameInput.value = '';
-        busNumberInput.value = '';
-        fileInput.value = '';
-        preview.hidden = true;
-        preview.src = '';
-        errorEl.hidden = true;
-        pendingFile = null;
-        overlay.hidden = false;
-    }
-
-    function closeModal() {
-        overlay.hidden = true;
-        activeCard = null;
-    }
-
-    closeBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) closeModal();
-    });
-
-    uploadBox.addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', () => {
-        const file = fileInput.files[0];
-        errorEl.hidden = true;
-
-        if (!file) return;
-
-        const validTypes = ['image/jpeg', 'image/png'];
-        const maxBytes = MAX_SIZE_MB * 1024 * 1024;
-
-        if (!validTypes.includes(file.type)) {
-            errorEl.textContent = 'Please upload a JPG or PNG image.';
-            errorEl.hidden = false;
-            fileInput.value = '';
-            pendingFile = null;
-            return;
-        }
-
-        if (file.size > maxBytes) {
-            errorEl.textContent = `File exceeds ${MAX_SIZE_MB} MB.`;
-            errorEl.hidden = false;
-            fileInput.value = '';
-            pendingFile = null;
-            return;
-        }
-
-        pendingFile = file;
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            preview.src = evt.target.result;
-            preview.hidden = false;
-        };
-        reader.readAsDataURL(file);
-    });
-
-    submitBtn.addEventListener('click', () => {
-        const name = itemNameInput.value.trim();
-        const busNumber = busNumberInput.value.trim();
-
-        if (!name || !busNumber || !pendingFile) {
-            errorEl.textContent = 'Please fill in all fields and select a photo.';
-            errorEl.hidden = false;
-            return;
-        }
-
-        if (activeCard) {
-            activeCard.outerHTML = renderFilledCard({
-                description: name,
-                busNumber: busNumber
-            });
-            bindUploadSlots();
-        }
-        closeModal();
-    });
-
-    render();
+  render();
 })();
