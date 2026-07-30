@@ -11,32 +11,24 @@ let passengers = 1;
 passengerCount.textContent = passengers;
 
 plusBtn.addEventListener("click", () => {
+  passengers++;
 
-    passengers++;
-
-    passengerCount.textContent = passengers;
-
+  passengerCount.textContent = passengers;
 });
 
 minusBtn.addEventListener("click", () => {
+  if (passengers > 1) {
+    passengers--;
 
-    if (passengers > 1) {
+    passengerCount.textContent = passengers;
 
-        passengers--;
+    // Remove extra selected seats
+    const selectedSeats = document.querySelectorAll(".seat.selected");
 
-        passengerCount.textContent = passengers;
-
-        // Remove extra selected seats
-        const selectedSeats = document.querySelectorAll(".seat.selected");
-
-        if (selectedSeats.length > passengers) {
-
-            selectedSeats[selectedSeats.length - 1].classList.remove("selected");
-
-        }
-
+    if (selectedSeats.length > passengers) {
+      selectedSeats[selectedSeats.length - 1].classList.remove("selected");
     }
-
+  }
 });
 
 /* ==========================================
@@ -45,34 +37,24 @@ minusBtn.addEventListener("click", () => {
 
 const seats = document.querySelectorAll(".seat");
 
-seats.forEach(seat => {
+seats.forEach((seat) => {
+  seat.addEventListener("click", () => {
+    if (seat.classList.contains("occupied")) {
+      return;
+    }
 
-    seat.addEventListener("click", () => {
+    const selected = document.querySelectorAll(".seat.selected");
 
-        if (seat.classList.contains("occupied")) {
+    if (!seat.classList.contains("selected")) {
+      if (selected.length >= passengers) {
+        alert("You cannot select more seats than passengers.");
 
-            return;
+        return;
+      }
+    }
 
-        }
-
-        const selected = document.querySelectorAll(".seat.selected");
-
-        if (!seat.classList.contains("selected")) {
-
-            if (selected.length >= passengers) {
-
-                alert("You cannot select more seats than passengers.");
-
-                return;
-
-            }
-
-        }
-
-        seat.classList.toggle("selected");
-
-    });
-
+    seat.classList.toggle("selected");
+  });
 });
 
 /* ==========================================
@@ -85,79 +67,62 @@ const selectedEmployees = document.getElementById("selectedEmployees");
 
 let employees = [];
 
-function addEmployeeTag() {
+async function addEmployeeTag() {
+  const name = searchInput.value.trim();
 
-    const name = searchInput.value.trim();
+  if (name === "") {
+    alert("Please enter an employee name.");
 
-    if (name === "") {
+    return;
+  }
 
-        alert("Please enter an employee name.");
+  if (employees.includes(name)) {
+    alert("Employee already added.");
 
-        return;
+    return;
+  }
 
-    }
+  const results = await searchEmployees(name);
 
-    if (employees.includes(name)) {
+  const exactEmployee = results.find(
+    (employee) => employee.full_name.toLowerCase() === name.toLowerCase(),
+  );
 
-        alert("Employee already added.");
+  if (!exactEmployee) {
+    alert("Employee not found in database.");
 
-        return;
+    return;
+  }
 
-    }
+  employees.push(exactEmployee.full_name);
 
-    employees.push(name);
+  const tag = document.createElement("div");
 
-    const tag = document.createElement("div");
+  tag.className = "tag";
 
-    tag.className = "tag";
-
-    tag.innerHTML = `
-        ${name}
+  tag.innerHTML = `
+        ${exactEmployee.full_name}
         <span class="remove-tag">&times;</span>
     `;
 
-    selectedEmployees.appendChild(tag);
+  selectedEmployees.appendChild(tag);
 
-    searchInput.value = "";
+  searchInput.value = "";
 
-    tag.querySelector(".remove-tag").addEventListener("click", () => {
+  tag.querySelector(".remove-tag").addEventListener("click", () => {
+    employees = employees.filter((emp) => emp !== exactEmployee.full_name);
 
-        employees = employees.filter(emp => emp !== name);
-
-        tag.remove();
-
-        if (passengers > employees.length && employees.length > 0) {
-
-            passengers = employees.length;
-
-            passengerCount.textContent = passengers;
-
-            const selected = document.querySelectorAll(".seat.selected");
-
-            while (selected.length > passengers) {
-
-                selected[selected.length - 1].classList.remove("selected");
-
-            }
-
-        }
-
-    });
-
+    tag.remove();
+  });
 }
-
 addEmployee.addEventListener("click", addEmployeeTag);
 
-searchInput.addEventListener("keypress", function(e){
+searchInput.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
 
-    if(e.key === "Enter"){
-
-        e.preventDefault();
-
-        addEmployeeTag();
-
-    }
-
+    addEmployeeTag();
+  }
 });
 
 /* ==========================================
@@ -166,89 +131,126 @@ searchInput.addEventListener("keypress", function(e){
 
 const bookButton = document.querySelector(".book-btn");
 
-bookButton.addEventListener("click", () => {
+bookButton.addEventListener("click", async () => {
+  const station = document.getElementById("station").value;
 
-    const station = document.getElementById("station").value;
+  const date = document.getElementById("travelDate").value;
 
-    const date = document.getElementById("travelDate").value;
+  const time = document.getElementById("pickupTime").value;
 
-    const time = document.getElementById("pickupTime").value;
+  const directionElement = document.querySelector(
+    "input[name='direction']:checked",
+  );
 
-    const direction = document.querySelector(
-        "input[name='direction']:checked"
-    ).parentElement.innerText.trim();
+  const direction = directionElement.parentElement.innerText.trim();
 
-    const selectedSeats = [];
+  const selectedSeats = [];
 
-    document.querySelectorAll(".seat.selected").forEach(seat => {
+  document.querySelectorAll(".seat.selected").forEach((seat) => {
+    selectedSeats.push(Number(seat.innerText));
+  });
 
-        selectedSeats.push(seat.innerText);
+  // ==========================================
+  // VALIDATION
+  // ==========================================
 
+  if (employees.length === 0) {
+    alert("Please add at least one employee.");
+
+    return;
+  }
+
+  if (date === "") {
+    alert("Please choose a travel date.");
+
+    return;
+  }
+
+  if (selectedSeats.length !== employees.length) {
+    alert("Please select one seat for every employee.");
+
+    return;
+  }
+
+  // ==========================================
+  // RESERVATION OBJECT
+  // ==========================================
+
+  const reservation = {
+    employees: employees,
+
+    passengers: employees.length,
+
+    station: station,
+
+    date: date,
+
+    time: time,
+
+    direction: direction,
+
+    seats: selectedSeats,
+
+    bus_id: 1,
+  };
+
+  try {
+    bookButton.disabled = true;
+
+    bookButton.innerText = "Booking...";
+
+    // ==========================================
+    // SEND TO BACKEND
+    // ==========================================
+
+    const response = await fetch("/api/reservations", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(reservation),
     });
 
-    if (employees.length === 0) {
+    const data = await response.json();
 
-        alert("Please add at least one employee.");
-
-        return;
-
+    if (!response.ok) {
+      throw new Error(data.message || "Reservation failed");
     }
 
-    if (date === "") {
+    // ==========================================
+    // SUCCESS
+    // ==========================================
 
-        alert("Please choose a travel date.");
+    alert("Reservation created successfully!");
 
-        return;
+    console.log("Reservation IDs:", data.reservationIds);
 
-    }
+    // Clear employees
 
-    if (selectedSeats.length !== passengers) {
+    employees = [];
 
-        alert("Please select a seat for every passenger.");
+    selectedEmployees.innerHTML = "";
 
-        return;
+    // Clear seats
 
-    }
-
-    const reservation = {
-
-        employees,
-
-        passengers,
-
-        station,
-
-        date,
-
-        time,
-
-        direction,
-
-        seats: selectedSeats
-
-    };
-
-    console.log(reservation);
-
-    alert("Reservation is ready to be sent to the server.");
-
-    /*
-    Later:
-
-    fetch('/reservation', {
-
-        method:'POST',
-
-        headers:{
-            'Content-Type':'application/json'
-        },
-
-        body:JSON.stringify(reservation)
-
+    document.querySelectorAll(".seat.selected").forEach((seat) => {
+      seat.classList.remove("selected");
     });
 
-    */
+    // Refresh seats
 
+    await loadOccupiedSeats();
+  } catch (error) {
+    console.error(error);
+
+    alert("Booking failed: " + error.message);
+  } finally {
+    bookButton.disabled = false;
+
+    bookButton.innerText = "Book Now!";
+  }
 });
 
 /* ==========================================
@@ -260,26 +262,409 @@ const today = new Date().toISOString().split("T")[0];
 document.getElementById("travelDate").setAttribute("min", today);
 
 /* ==========================================
-   OPTIONAL:
-   PRELOAD SAMPLE EMPLOYEES
+   LOAD EMPLOYEES FROM DATABASE
 ========================================== */
 
-// Later these will come from PostgreSQL
+async function searchEmployees(search = "") {
+  try {
+    const response = await fetch(
+      `/api/dashboard/employees?search=${encodeURIComponent(search)}`,
+    );
 
-const employeeSuggestions = [
+    const data = await response.json();
 
-    "Ahmed Ali",
+    if (!data.success) {
+      throw new Error(data.message);
+    }
 
-    "Mohamed Hassan",
+    return data.employees;
+  } catch (error) {
+    console.error("Employee loading error:", error);
 
-    "Sara Ibrahim",
-
-    "Omar Khaled",
-
-    "Youssef Adel",
-
-    "Mariam Ashraf"
-
-];
+    return [];
+  }
+}
 
 console.log("Employees:", employeeSuggestions);
+
+
+/* ==========================================
+   LOAD STATIONS
+========================================== */
+
+async function loadStations() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/dashboard/stations"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        const stationSelect =
+            document.getElementById(
+                "station"
+            );
+
+
+        stationSelect.innerHTML =
+            `<option value="">
+                Select station
+            </option>`;
+
+
+        data.stations.forEach(station => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                station.station_name;
+
+
+            option.textContent =
+                station.station_name;
+
+
+            stationSelect.appendChild(
+                option
+            );
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load stations:",
+            error
+        );
+
+    }
+
+}
+
+/* ==========================================
+   LOAD SEATS
+========================================== */
+
+async function loadSeats() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/dashboard/seats?bus_id=1"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        const seatGrid =
+            document.querySelector(
+                ".seat-grid"
+            );
+
+
+        seatGrid.innerHTML = "";
+
+
+        data.seats.forEach(
+            seatNumber => {
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.className =
+                    "seat";
+
+
+                button.innerText =
+                    seatNumber;
+
+
+                button.dataset.seat =
+                    seatNumber;
+
+
+                seatGrid.appendChild(
+                    button
+                );
+
+            }
+        );
+
+
+        attachSeatEvents();
+
+
+        await loadOccupiedSeats();
+
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load seats:",
+            error
+        );
+
+    }
+
+}
+
+/* ==========================================
+   LOAD OCCUPIED SEATS
+========================================== */
+
+async function loadOccupiedSeats() {
+
+    const date =
+        document.getElementById(
+            "travelDate"
+        ).value;
+
+
+    const time =
+        document.getElementById(
+            "pickupTime"
+        ).value;
+
+
+    const directionElement =
+        document.querySelector(
+            "input[name='direction']:checked"
+        );
+
+
+    if (!date || !time || !directionElement) {
+
+        return;
+
+    }
+
+
+    const direction =
+        directionElement
+            .parentElement
+            .innerText
+            .trim();
+
+
+    try {
+
+        const url =
+            `/api/dashboard/occupied-seats` +
+            `?bus_id=1` +
+            `&travel_date=${encodeURIComponent(date)}` +
+            `&pickup_time=${encodeURIComponent(time)}` +
+            `&direction=${encodeURIComponent(direction)}`;
+
+
+        const response =
+            await fetch(url);
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.message
+            );
+
+        }
+
+
+        document
+            .querySelectorAll(".seat")
+            .forEach(seat => {
+
+                const number =
+                    Number(seat.dataset.seat);
+
+
+                if (
+                    data.occupiedSeats
+                    .includes(number)
+                ) {
+
+                    seat.classList.add(
+                        "occupied"
+                    );
+
+
+                    seat.classList.remove(
+                        "selected"
+                    );
+
+                } else {
+
+                    seat.classList.remove(
+                        "occupied"
+                    );
+
+                }
+
+            });
+
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load occupied seats:",
+            error
+        );
+
+    }
+
+}
+
+/* ==========================================
+   SEAT EVENTS
+========================================== */
+
+function attachSeatEvents() {
+
+    const seats =
+        document.querySelectorAll(
+            ".seat"
+        );
+
+
+    seats.forEach(seat => {
+
+        seat.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    seat.classList.contains(
+                        "occupied"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                const selected =
+                    document.querySelectorAll(
+                        ".seat.selected"
+                    );
+
+
+                if (
+                    !seat.classList.contains(
+                        "selected"
+                    )
+                ) {
+
+                    if (
+                        selected.length >=
+                        employees.length
+                    ) {
+
+                        alert(
+                            "You cannot select more seats than passengers."
+                        );
+
+                        return;
+
+                    }
+
+                }
+
+
+                seat.classList.toggle(
+                    "selected"
+                );
+
+            }
+        );
+
+    });
+
+}
+
+
+/* ==========================================
+   TRIP CHANGE EVENTS
+========================================== */
+
+document
+    .getElementById("travelDate")
+    .addEventListener(
+        "change",
+        loadOccupiedSeats
+    );
+
+
+document
+    .getElementById("pickupTime")
+    .addEventListener(
+        "change",
+        loadOccupiedSeats
+    );
+
+
+document
+    .querySelectorAll(
+        "input[name='direction']"
+    )
+    .forEach(radio => {
+
+        radio.addEventListener(
+            "change",
+            loadOccupiedSeats
+        );
+
+    });
+
+    /* ==========================================
+   INITIALIZE DASHBOARD
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await loadStations();
+
+        await loadSeats();
+
+    }
+);
