@@ -1,185 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bus Reservation System</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
 
     <!-- <link rel="stylesheet" href="style.css"> -->
-    <link rel="stylesheet" href="./Dashboard.css">
-</head>
+    <link rel="stylesheet" href="./Dashboard.css" />
+  </head>
 
-<body>
-
-<header class="site-header">
-    <a href="Dashboard.html" class="logo">
-        <img src="images/logo.png" alt="All For One Group" class="logo-img">
-    </a>
-    <nav>
+  <body>
+    <header class="site-header">
+      <a href="Dashboard.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img" />
+      </a>
+      <nav>
         <a href="Dashboard.html" class="active">Home</a>
         <a href="calendar.html">Booking Calendar</a>
         <a href="trip-history.html">Trip history</a>
         <a href="lost-found.html">Lost &amp; found</a>
-    </nav>
-    <div class="header-right">
+      </nav>
+      <div class="header-right">
         <span>English</span>
         <span aria-hidden="true">&#128100;</span>
-    </div>
-</header>
+      </div>
+    </header>
 
-<section class="hero">
+    <section class="hero">
+      <img src="images/bus-background.jpeg" class="background" />
 
-    <img src="images/bus-background.jpeg" class="background">
-
-    <div class="overlay">
+      <div class="overlay">
         <h1>Welcome, USER 👋</h1>
         <p>Enjoy your ride!!</p>
-    </div>
+      </div>
 
-    <div class="booking-card">
-
+      <div class="booking-card">
         <div class="left-side">
+          <label>Names List</label>
 
-            <label>Names List</label>
+          <div class="employee-box">
+            <input
+              type="text"
+              id="employeeSearch"
+              placeholder="Search employee"
+            />
+            <button id="addEmployee">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
 
-            <div class="employee-box">
-                <input type="text" id="employeeSearch" placeholder="Search employee">
-                <button id="addEmployee">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
+          <div id="selectedEmployees" class="selected-tags"></div>
 
-            <div id="selectedEmployees" class="selected-tags"></div>
+          <div class="direction">
+            <label>
+              <input type="radio" name="direction" value="To Office" checked />
+              To Office
+            </label>
 
-            <div class="direction">
-                <label>
-                    <input type="radio" name="direction" checked>
-                    To Office
-                </label>
-                <label>
-                    <input type="radio" name="direction">
-                    From Office
-                </label>
-            </div>
-            
-            <label>Pick-up Station</label>
-            <select id="station">
-                <option>Abu Qir</option>
-                <option>Mamoura</option>
-                <option>Montaza</option>
-                <option>Mandara</option>
-                <option>Asafra</option>
-                <option>Miami</option>
-                <option>Sidi Bishr</option>
-                <option>Mohamed Nagib</option>
-                <option>Victoria</option>
-                <option>Loran</option>
-                <option>Ganaklis</option>
-                <option>Gleem</option>
-                <option>Bokla</option>
-                <option>Roushdy</option>
-                <option>Mostafa Kamel</option>
-                <option>Sidi Gaber</option>
-                <option>Cleopatra</option>
-                <option>Sporting</option>
-                <option>Ibrahimya</option>
-                <option>Cleopatra</option>
-                <option>Cleopatra</option>
-            </select>
+            <label>
+              <input type="radio" name="direction" value="From Office" />
+              From Office
+            </label>
+          </div>
 
+          <label>Pick-up Station</label>
+          <select id="station"></select>
 
+          <label>Travel Date</label>
+          <input type="date" id="travelDate" />
 
-            <label>Travel Date</label>
-            <input type="date" id="travelDate">
+          <label>Pick-up Time</label>
 
-            <label>Pick-up Time</label>
-            <select id="pickupTime">
-                <option>8:00 AM</option>
-                <option>9:00 AM</option>
-                <option>10:00 AM</option>
-                <option>5:00 PM</option>
-                <option>6:00 PM</option>
-                <option>7:00 PM</option>
-            </select>
-
-            <!-- <label>Number of Passengers</label>
-            <div class="counter">
-                <button id="minus">
-                    <i class="fa-solid fa-minus"></i>
-                </button>
-                <span id="passengerCount">1</span>
-                <button id="plus">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-            </div> -->
-
-            
-
+          <select id="pickupTime">
+            <option value="08:00">8:00 AM</option>
+            <option value="09:00">9:00 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="17:00">5:00 PM</option>
+            <option value="18:00">6:00 PM</option>
+            <option value="19:00">7:00 PM</option>
+          </select>
         </div>
 
         <div class="right-side">
+          <h2>Choose Your Seat</h2>
 
-            <h2>Choose Your Seat</h2>
+          <div class="seat-grid">
+            <button class="seat">10</button>
+            <button class="seat">11</button>
+            <button class="seat">12</button>
+            <button class="seat">7</button>
+            <button class="seat">8</button>
+            <button class="seat">9</button>
+            <button class="seat">4</button>
+            <button class="seat">5</button>
+            <button class="seat">6</button>
+            <button class="seat">1</button>
+            <button class="seat">2</button>
+            <button class="seat">3</button>
+          </div>
 
-            <div class="seat-grid">
-                <button class="seat">10</button>
-                <button class="seat">11</button>
-                <button class="seat">12</button>
-
-                <button class="seat occupied">7</button>
-                <button class="seat occupied">8</button>
-                <button class="seat">9</button>
-
-                <button class="seat">4</button>
-                <button class="seat">5</button>
-                <button class="seat">6</button>
-
-                <button class="seat">1</button>
-                <button class="seat">2</button>
-                <button class="seat">3</button>
+          <div class="legend">
+            <div>
+              <span class="box selected"></span>
+              Selected
             </div>
-
-            <div class="legend">
-                <div>
-                    <span class="box selected"></span>
-                    Selected
-                </div>
-                <div>
-                    <span class="box occupied"></span>
-                    Occupied
-                </div>
-                <div>
-                    <span class="box available"></span>
-                    Available
-                </div>
-
-                
+            <div>
+              <span class="box occupied"></span>
+              Occupied
             </div>
-            <button class="book-btn">Book Now!</button>
-
+            <div>
+              <span class="box available"></span>
+              Available
+            </div>
+          </div>
+          <button id="bookBtn" class="book-btn">Book Now!</button>
         </div>
+      </div>
+    </section>
 
-    </div>
-
-</section>
-
-<footer class="site-footer">
-    <a href="Dashboard.html" class="logo">
-        <img src="images/logo.png" alt="All For One Group" class="logo-img">
-    </a>
-    <div class="footer-links">
+    <footer class="site-footer">
+      <a href="Dashboard.html" class="logo">
+        <img src="images/logo.png" alt="All For One Group" class="logo-img" />
+      </a>
+      <div class="footer-links">
         <a href="feedback.html">Feedback</a>
         <a href="reviews.html">Reviews</a>
         <a href="faq.html">FAQs</a>
         <a href="report.html">Report</a>
-    </div>
-</footer>
+      </div>
+    </footer>
 
-<script src="/js/script.js"></script>
-
-</body>
+    <script src="dashboard.js"></script>
+  </body>
 </html>
