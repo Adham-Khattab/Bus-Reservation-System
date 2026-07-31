@@ -85,7 +85,7 @@ const getBuses = async (req, res) => {
                 bus_number,
                 license_plate,
                 driver_name ,
-                driver_phone ),
+                driver_phone ,
                 capacity
 
             FROM buses

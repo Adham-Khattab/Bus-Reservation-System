@@ -57,6 +57,17 @@ seats.forEach((seat) => {
   });
 });
 
+document
+  .getElementById("travelDate")
+  .addEventListener("change", loadOccupiedSeats);
+
+document
+  .getElementById("pickupTime")
+  .addEventListener("change", loadOccupiedSeats);
+
+document.querySelectorAll('input[name="direction"]').forEach((radio) => {
+  radio.addEventListener("change", loadOccupiedSeats);
+});
 /* ==========================================
    EMPLOYEE TAGS
 ========================================== */
@@ -285,162 +296,40 @@ async function searchEmployees(search = "") {
   }
 }
 
-console.log("Employees:", employeeSuggestions);
-
+// console.log("Employees:", employeeSuggestions);
 
 /* ==========================================
    LOAD STATIONS
 ========================================== */
 
 async function loadStations() {
+  try {
+    const response = await fetch("/api/dashboard/stations");
 
-    try {
+    const data = await response.json();
 
-        const response =
-            await fetch(
-                "/api/dashboard/stations"
-            );
+    if (!data.success) {
+      throw new Error(data.message);
+    }
 
+    const stationSelect = document.getElementById("station");
 
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            throw new Error(
-                data.message
-            );
-
-        }
-
-
-        const stationSelect =
-            document.getElementById(
-                "station"
-            );
-
-
-        stationSelect.innerHTML =
-            `<option value="">
+    stationSelect.innerHTML = `<option value="">
                 Select station
             </option>`;
 
+    data.stations.forEach((station) => {
+      const option = document.createElement("option");
 
-        data.stations.forEach(station => {
+      option.value = station.station_name;
 
-            const option =
-                document.createElement(
-                    "option"
-                );
+      option.textContent = station.station_name;
 
-
-            option.value =
-                station.station_name;
-
-
-            option.textContent =
-                station.station_name;
-
-
-            stationSelect.appendChild(
-                option
-            );
-
-        });
-
-
-    } catch (error) {
-
-        console.error(
-            "Failed to load stations:",
-            error
-        );
-
-    }
-
-}
-
-/* ==========================================
-   LOAD SEATS
-========================================== */
-
-async function loadSeats() {
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/dashboard/seats?bus_id=1"
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            throw new Error(
-                data.message
-            );
-
-        }
-
-
-        const seatGrid =
-            document.querySelector(
-                ".seat-grid"
-            );
-
-
-        seatGrid.innerHTML = "";
-
-
-        data.seats.forEach(
-            seatNumber => {
-
-                const button =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                button.className =
-                    "seat";
-
-
-                button.innerText =
-                    seatNumber;
-
-
-                button.dataset.seat =
-                    seatNumber;
-
-
-                seatGrid.appendChild(
-                    button
-                );
-
-            }
-        );
-
-
-        attachSeatEvents();
-
-
-        await loadOccupiedSeats();
-
-
-    } catch (error) {
-
-        console.error(
-            "Failed to load seats:",
-            error
-        );
-
-    }
-
+      stationSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Failed to load stations:", error);
+  }
 }
 
 /* ==========================================
@@ -448,108 +337,50 @@ async function loadSeats() {
 ========================================== */
 
 async function loadOccupiedSeats() {
+  const date = document.getElementById("travelDate").value;
 
-    const date =
-        document.getElementById(
-            "travelDate"
-        ).value;
+  const time = document.getElementById("pickupTime").value;
 
+  const directionElement = document.querySelector(
+    "input[name='direction']:checked",
+  );
 
-    const time =
-        document.getElementById(
-            "pickupTime"
-        ).value;
+  if (!date || !time || !directionElement) {
+    return;
+  }
 
+  const direction = directionElement.parentElement.innerText.trim();
 
-    const directionElement =
-        document.querySelector(
-            "input[name='direction']:checked"
-        );
+  try {
+    const url =
+      `/api/dashboard/occupied-seats` +
+      `?bus_id=1` +
+      `&travel_date=${encodeURIComponent(date)}` +
+      `&pickup_time=${encodeURIComponent(time)}` +
+      `&direction=${encodeURIComponent(direction)}`;
 
+    const response = await fetch(url);
 
-    if (!date || !time || !directionElement) {
+    const data = await response.json();
 
-        return;
-
+    if (!data.success) {
+      throw new Error(data.message);
     }
 
+    document.querySelectorAll(".seat").forEach((seat) => {
+      const number = Number(seat.set.innerText);
 
-    const direction =
-        directionElement
-            .parentElement
-            .innerText
-            .trim();
+      if (data.occupiedSeats.includes(number)) {
+        seat.classList.add("occupied");
 
-
-    try {
-
-        const url =
-            `/api/dashboard/occupied-seats` +
-            `?bus_id=1` +
-            `&travel_date=${encodeURIComponent(date)}` +
-            `&pickup_time=${encodeURIComponent(time)}` +
-            `&direction=${encodeURIComponent(direction)}`;
-
-
-        const response =
-            await fetch(url);
-
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            throw new Error(
-                data.message
-            );
-
-        }
-
-
-        document
-            .querySelectorAll(".seat")
-            .forEach(seat => {
-
-                const number =
-                    Number(seat.dataset.seat);
-
-
-                if (
-                    data.occupiedSeats
-                    .includes(number)
-                ) {
-
-                    seat.classList.add(
-                        "occupied"
-                    );
-
-
-                    seat.classList.remove(
-                        "selected"
-                    );
-
-                } else {
-
-                    seat.classList.remove(
-                        "occupied"
-                    );
-
-                }
-
-            });
-
-
-    } catch (error) {
-
-        console.error(
-            "Failed to load occupied seats:",
-            error
-        );
-
-    }
-
+        seat.classList.remove("selected");
+      } else {
+        seat.classList.remove("occupied");
+      }
+    });
+  } catch (error) {
+    console.error("Failed to load occupied seats:", error);
+  }
 }
 
 /* ==========================================
@@ -557,114 +388,46 @@ async function loadOccupiedSeats() {
 ========================================== */
 
 function attachSeatEvents() {
+  seats.forEach((seat) => {
+    seat.addEventListener("click", () => {
+      if (seat.classList.contains("occupied")) {
+        return;
+      }
 
-    const seats =
-        document.querySelectorAll(
-            ".seat"
-        );
+      const selected = document.querySelectorAll(".seat.selected");
 
-
-    seats.forEach(seat => {
-
-        seat.addEventListener(
-            "click",
-            () => {
-
-                if (
-                    seat.classList.contains(
-                        "occupied"
-                    )
-                ) {
-
-                    return;
-
-                }
-
-
-                const selected =
-                    document.querySelectorAll(
-                        ".seat.selected"
-                    );
-
-
-                if (
-                    !seat.classList.contains(
-                        "selected"
-                    )
-                ) {
-
-                    if (
-                        selected.length >=
-                        employees.length
-                    ) {
-
-                        alert(
-                            "You cannot select more seats than passengers."
-                        );
-
-                        return;
-
-                    }
-
-                }
-
-
-                seat.classList.toggle(
-                    "selected"
-                );
-
-            }
-        );
-
+      if (!seat.classList.contains("selected")) {
+        if (selected.length >= employees.length) {
+          alert("You cannot select more seats than passengers.");
+          return;
+        }
+      }
+      seat.classList.toggle("selected");
     });
-
+  });
 }
-
 
 /* ==========================================
    TRIP CHANGE EVENTS
 ========================================== */
 
 document
-    .getElementById("travelDate")
-    .addEventListener(
-        "change",
-        loadOccupiedSeats
-    );
-
+  .getElementById("travelDate")
+  .addEventListener("change", loadOccupiedSeats);
 
 document
-    .getElementById("pickupTime")
-    .addEventListener(
-        "change",
-        loadOccupiedSeats
-    );
+  .getElementById("pickupTime")
+  .addEventListener("change", loadOccupiedSeats);
 
+document.querySelectorAll("input[name='direction']").forEach((radio) => {
+  radio.addEventListener("change", loadOccupiedSeats);
+});
 
-document
-    .querySelectorAll(
-        "input[name='direction']"
-    )
-    .forEach(radio => {
-
-        radio.addEventListener(
-            "change",
-            loadOccupiedSeats
-        );
-
-    });
-
-    /* ==========================================
+/* ==========================================
    INITIALIZE DASHBOARD
 ========================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
-
-        await loadStations();
-
-        await loadSeats();
-
-    }
-);
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadStations();
+  attachSeatEvents();
+});
