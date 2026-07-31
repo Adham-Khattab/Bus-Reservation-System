@@ -20,7 +20,7 @@ const createReservation = async (req, res) => {
     } = req.body;
 
     // ==========================================
-    // VALIDATION
+    // BASIC VALIDATION
     // ==========================================
 
     if (!Array.isArray(employees) || employees.length === 0) {
@@ -88,7 +88,7 @@ const createReservation = async (req, res) => {
     }
 
     // ==========================================
-    // DEFAULT BUS
+    // BUS
     // ==========================================
 
     const selectedBusId = bus_id || 1;
@@ -105,16 +105,17 @@ const createReservation = async (req, res) => {
 
     const busResult = await client.query(
       `
-            SELECT
-                bus_id,
-                total_seats
+                SELECT
+                    bus_id,
+                    capacity
 
-            FROM buses
+                FROM buses
 
-            WHERE bus_id = $1
+                WHERE bus_id = $1
 
-            FOR UPDATE
-            `,
+                FOR UPDATE
+                `,
+
       [selectedBusId],
     );
 
@@ -122,7 +123,7 @@ const createReservation = async (req, res) => {
       throw new Error("Bus not found");
     }
 
-    const totalSeats = busResult.rows[0].total_seats;
+    const totalSeats = busResult.rows[0].capacity;
 
     // ==========================================
     // CHECK STATION
@@ -130,13 +131,15 @@ const createReservation = async (req, res) => {
 
     const stationResult = await client.query(
       `
-            SELECT station_id
+                SELECT
+                    station_id
 
-            FROM stations
+                FROM stations
 
-            WHERE LOWER(station_name)
-            = LOWER($1)
-            `,
+                WHERE LOWER(station_name)
+                = LOWER($1)
+                `,
+
       [station],
     );
 
@@ -153,14 +156,16 @@ const createReservation = async (req, res) => {
     const seatNumbers = seats.map(Number);
 
     const invalidSeats = seatNumbers.filter(
-      (seat) => seat < 1 || seat > totalSeats || !Number.isInteger(seat),
+      (seat) => !Number.isInteger(seat) || seat < 1 || seat > totalSeats,
     );
 
     if (invalidSeats.length > 0) {
       throw new Error(`Invalid seat number: ${invalidSeats.join(", ")}`);
     }
 
-    // Check duplicate seats
+    // ==========================================
+    // DUPLICATE SEATS
+    // ==========================================
 
     if (new Set(seatNumbers).size !== seatNumbers.length) {
       throw new Error("The same seat cannot be assigned twice");
@@ -173,65 +178,42 @@ const createReservation = async (req, res) => {
     const employeeIds = [];
 
     for (const employee of employees) {
-      let employeeResult;
+      const result = await client.query(
+        `
+    SELECT employee_id
+    FROM employees
+    WHERE LOWER(CONCAT(F_name, ' ', L_name)) = LOWER($1)
+    `,
+        [employee],
+      );
 
-      // If frontend sends employee_id
-
-      if (typeof employee === "number" || !isNaN(employee)) {
-        employeeResult = await client.query(
-          `
-                    SELECT employee_id
-
-                    FROM employees
-
-                    WHERE employee_id = $1
-                    `,
-          [Number(employee)],
-        );
-      }
-
-      // If frontend sends employee name
-      else {
-        employeeResult = await client.query(
-          `
-                    SELECT employee_id
-
-                    FROM employees
-
-                    WHERE LOWER(full_name)
-                    = LOWER($1)
-                    `,
-          [employee],
-        );
-      }
-
-      if (employeeResult.rows.length === 0) {
+      if (result.rows.length === 0) {
         throw new Error(`Employee not found: ${employee}`);
       }
 
-      employeeIds.push(employeeResult.rows[0].employee_id);
-    }
+      if (result.rows.length > 1) {
+        throw new Error(`Multiple employees found with the name: ${employee}`);
+      }
 
+      employeeIds.push(result.rows[0].employee_id);
+    }
     // ==========================================
     // CHECK OCCUPIED SEATS
     // ==========================================
 
     const occupiedResult = await client.query(
       `
-            SELECT seat_number
+                SELECT
+                    seat_number
+                FROM reservations
+                WHERE bus_id = $1
+                AND travel_date = $2
+                AND pickup_time = $3
+                AND direction = $4
+                AND seat_number =
+                    ANY($5::int[])
+                `,
 
-            FROM reservations
-
-            WHERE bus_id = $1
-
-            AND travel_date = $2
-
-            AND pickup_time = $3
-
-            AND direction = $4
-
-            AND seat_number = ANY($5::int[])
-            `,
       [selectedBusId, date, time, direction, seatNumbers],
     );
 
@@ -252,28 +234,27 @@ const createReservation = async (req, res) => {
     for (let i = 0; i < employeeIds.length; i++) {
       const result = await client.query(
         `
-                INSERT INTO reservations (
-                    employee_id,
-                    bus_id,
-                    station_id,
-                    travel_date,
-                    pickup_time,
-                    direction,
-                    seat_number
-                )
+                    INSERT INTO reservations (
+                        employee_id,
+                        bus_id,
+                        station_id,
+                        travel_date,
+                        pickup_time,
+                        direction,
+                        seat_number
+                    )
+                    VALUES (
 
-                VALUES (
-                    $1,
-                    $2,
-                    $3,
-                    $4,
-                    $5,
-                    $6,
-                    $7
-                )
-
-                RETURNING reservation_id
-                `,
+                        $1,
+                        $2,
+                        $3,
+                        $4,
+                        $5,
+                        $6,
+                        $7
+                    )
+                    RETURNING reservation_id
+                    `,
         [
           employeeIds[i],
           selectedBusId,
@@ -287,7 +268,6 @@ const createReservation = async (req, res) => {
 
       reservationIds.push(result.rows[0].reservation_id);
     }
-
     // ==========================================
     // COMMIT
     // ==========================================
@@ -326,72 +306,57 @@ const getReservation = async (req, res) => {
 
     const result = await pool.query(
       `
-            SELECT
+                SELECT
 
-                r.reservation_id,
+                    r.reservation_id,
+                    e.employee_id,
+                    e.F_name,
+                    e.L_name,
+                    b.bus_id,
+                    b.bus_number,
+                    b.license_plate,
+                    s.station_name,
+                    r.travel_date,
+                    r.pickup_time,
+                    r.direction,
+                    r.seat_number,
+                    r.reservation_date
+                FROM reservations r
+                JOIN employees e
+                    ON r.employee_id =
+                       e.employee_id
+                JOIN buses b
+                    ON r.bus_id =
+                       b.bus_id
 
-                e.employee_id,
+                JOIN stations s
+                    ON r.station_id =
+                       s.station_id
 
-                e.full_name,
+                WHERE
+                    r.reservation_id = $1
+                `,
 
-                b.bus_id,
-
-                b.bus_name,
-
-                b.license_plate,
-
-                s.station_name,
-
-                r.travel_date,
-
-                r.pickup_time,
-
-                r.direction,
-
-                r.seat_number,
-
-                r.created_at
-
-            FROM reservations r
-
-            JOIN employees e
-                ON r.employee_id = e.employee_id
-
-            JOIN buses b
-                ON r.bus_id = b.bus_id
-
-            JOIN stations s
-                ON r.station_id = s.station_id
-
-            WHERE r.reservation_id = $1
-            `,
       [reservationId],
     );
-
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-
         message: "Reservation not found",
       });
     }
-
     res.json({
       success: true,
-
       reservation: result.rows[0],
     });
   } catch (error) {
     console.error(error);
-
     res.status(500).json({
       success: false,
-
       message: "Failed to get reservation",
     });
   }
 };
-
 module.exports = {
   createReservation,
   getReservation,
