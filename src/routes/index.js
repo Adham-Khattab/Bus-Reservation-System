@@ -1,9 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-console.log("✅ routes/index.js loaded");
+console.log("routes/index.js loaded");
 
 router.get("/ping", (req, res) => res.json({ ok: true }));
+
+// Dashboard routes
+router.use("/dashboard", require("./dashboardRoutes"));
+
+// Reservation routes
+router.use("/reservations", require("./reservationRoutes"));
 
 // Explicitly mount lostFoundRoutes.js at /lost-found
 router.use("/lost-found", require("./lostFoundRoutes"));

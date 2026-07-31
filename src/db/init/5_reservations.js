@@ -6,11 +6,10 @@ module.exports = async (pool) => {
             employee_id INT NOT NULL,
             bus_id INT NOT NULL,
             station_id INT NOT NULL,
-
+            direction VARCHAR(20) NOT NULL,
             travel_date DATE NOT NULL,
             pickup_time TIME NOT NULL,
             seat_number INT NOT NULL,
-
             reservation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
             FOREIGN KEY (employee_id) REFERENCES employees(employee_id),

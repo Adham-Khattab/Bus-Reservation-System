@@ -1,4 +1,4 @@
-# nodejs-cv-filter-training
+# Shuttle-Bus-Reservation-System
 
 ## Prerequisites
 
