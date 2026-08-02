@@ -16,7 +16,7 @@ module.exports = async (pool) => {
             FOREIGN KEY (bus_id) REFERENCES buses(bus_id),
             FOREIGN KEY (station_id) REFERENCES stations(station_id),
 
-            CONSTRAINT unique_seat_per_trip UNIQUE (bus_id, travel_date, seat_number)
+            CONSTRAINT unique_seat_per_trip UNIQUE (bus_id, travel_date, pickup_time, direction, seat_number)
         )
     `);
 };
