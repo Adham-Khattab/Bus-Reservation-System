@@ -15,4 +15,6 @@ router.use("/reservations", require("./reservationRoutes"));
 router.use("/lost-found", require("./lostFoundRoutes"));
 router.use("/feedback", require("./feedbackRoutes"));
 router.use("/report", require("./reportRoutes"));
+router.use("/trips", require("./tripRoutes"));
+router.use("/calendar", require("./calendarRoutes"));
 module.exports = router;
