@@ -1,4 +1,3 @@
-// startServer();
 require("dotenv").config();
 
 const app = require("./src/app");
@@ -7,28 +6,23 @@ const initDB = require("./src/db/init");
 
 const PORT = process.env.PORT || 3000;
 
-// ==========================================
-// START SERVER
-// ==========================================
-
 const startServer = async () => {
   try {
     // Initialize database tables
-    await initDB();
-    console.log("Database initialized successfully.");
+    await initDB(pool);
+    console.log(" Database initialized successfully.");
 
     // Test database connection
     await pool.query("SELECT NOW()");
-    console.log("Database connection successful.");
+    console.log(" Database connection successful.");
 
-    // Start Express server
+    // Start server
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(` Server running at http://localhost:${PORT}`);
     });
-
   } catch (error) {
-    console.error("Failed to start server:");
-    console.error(error.message);
+    console.error(" Failed to start server:");
+    console.error(error);
     process.exit(1);
   }
 };
