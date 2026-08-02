@@ -1,35 +1,40 @@
 // Attach this script to your login page (the one with the Welcome Back form)
 
 document.addEventListener('DOMContentLoaded', () => {
-  const loginBtn = document.querySelector('#loginBtn');       // adjust selector to match your button
-  const emailInput = document.querySelector('#email');        // adjust selector to match your email input
-  const passwordInput = document.querySelector('#password');  // adjust selector to match your password input
-  const rememberMeInput = document.querySelector('#rememberMe'); // adjust selector to match your checkbox
-  const errorMsg = document.querySelector('#errorMsg');       // optional: element to show error messages
+  const form = document.querySelector('#loginForm');
+  const errorMsg = document.querySelector('#errorMsg');
 
-  loginBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // stop normal form submission, we'll send it with fetch instead
 
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-    const rememberMe = rememberMeInput ? rememberMeInput.checked : false;
+    const email = form.elements['employeeEmail'].value.trim();
+    const password = form.elements['employeePassword'].value;
+    const rememberMe = form.elements['rememberMe'].checked;
+
+    errorMsg.textContent = '';
 
     if (!email || !password) {
-      if (errorMsg) errorMsg.textContent = 'Please enter both email and password.';
+      errorMsg.textContent = 'Please enter both email and password.';
       return;
     }
 
     try {
+      console.log('Sending login request to /api/auth/login with:', { email });
+
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, rememberMe }),
       });
 
+      console.log('Response status:', response.status);
+
       const data = await response.json();
 
+      console.log('Response data:', data);
+
       if (!response.ok) {
-        if (errorMsg) errorMsg.textContent = data.message || 'Login failed.';
+        errorMsg.textContent = data.message || 'Login failed.';
         return;
       }
 
@@ -41,11 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Redirect to the dashboard on success
-      window.location.href = '/Dashboard.html';
+      window.location.href = './Dashboard.html';
 
     } catch (error) {
       console.error('Login request failed:', error);
-      if (errorMsg) errorMsg.textContent = 'Something went wrong. Please try again.';
+      errorMsg.textContent = 'Something went wrong. Please try again.';
     }
   });
 });

@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../db');
+const { sendOtpEmail } = require('../utils/mailer'); // adjust path if you place mailer.js elsewhere
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret';
 
@@ -13,9 +14,9 @@ exports.Login = async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required.' });
     }
 
-    // Fetch user by email
+    // Fetch employee by email
     const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
+      'SELECT * FROM employees WHERE email = $1',
       [email]
     );
 
@@ -36,7 +37,7 @@ exports.Login = async (req, res) => {
     const expiresIn = rememberMe ? '30d' : '1d';
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.employee_id, email: user.email },
       JWT_SECRET,
       { expiresIn }
     );
@@ -52,6 +53,136 @@ exports.Login = async (req, res) => {
 
   } catch (error) {
     console.error('Login error:', error);
+    return res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
+// POST /auth/signup
+exports.Signup = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email, and password are required.' });
+    }
+
+    // Check if an employee with this email already exists
+    const existing = await pool.query(
+      'SELECT employee_id FROM employees WHERE email = $1',
+      [email]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ message: 'An account with this email already exists.' });
+    }
+
+    // Split full name into first/last to match the employees table columns
+    const nameParts = name.trim().split(' ');
+    const F_name = nameParts[0];
+    const L_name = nameParts.slice(1).join(' ') || F_name; // fallback if only one name given
+
+    // Hash the password before storing
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const result = await pool.query(
+      `INSERT INTO employees (F_name, L_name, email, password)
+       VALUES ($1, $2, $3, $4)
+       RETURNING employee_id, F_name, L_name, email`,
+      [F_name, L_name, email, hashedPassword]
+    );
+
+    const newEmployee = result.rows[0];
+
+    return res.status(201).json({
+      message: 'Account created successfully.',
+      employee: newEmployee,
+    });
+
+  } catch (error) {
+    console.error('Signup error:', error);
+    return res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
+// POST /auth/forgot-password
+exports.ForgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required.' });
+    }
+
+    const result = await pool.query(
+      'SELECT employee_id FROM employees WHERE email = $1',
+      [email]
+    );
+
+    // Don't reveal whether the email exists or not, for security.
+    // Always respond the same way, but only actually send an email if it does exist.
+    if (result.rows.length > 0) {
+      // Generate a 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+
+      await pool.query(
+        'UPDATE employees SET reset_otp = $1, reset_otp_expires = $2 WHERE email = $3',
+        [otp, expires, email]
+      );
+
+      await sendOtpEmail(email, otp);
+    }
+
+    return res.status(200).json({
+      message: 'If an account with that email exists, an OTP has been sent.',
+    });
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
+// POST /auth/reset-password
+exports.ResetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ message: 'Email, OTP, and new password are required.' });
+    }
+
+    const result = await pool.query(
+      'SELECT reset_otp, reset_otp_expires FROM employees WHERE email = $1',
+      [email]
+    );
+
+    const user = result.rows[0];
+
+    if (!user || !user.reset_otp) {
+      return res.status(400).json({ message: 'Invalid or expired OTP.' });
+    }
+
+    if (user.reset_otp !== otp) {
+      return res.status(400).json({ message: 'Invalid or expired OTP.' });
+    }
+
+    if (new Date() > new Date(user.reset_otp_expires)) {
+      return res.status(400).json({ message: 'This OTP has expired. Please request a new one.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password and clear the OTP fields so it can't be reused
+    await pool.query(
+      'UPDATE employees SET password = $1, reset_otp = NULL, reset_otp_expires = NULL WHERE email = $2',
+      [hashedPassword, email]
+    );
+
+    return res.status(200).json({ message: 'Password reset successfully.' });
+
+  } catch (error) {
+    console.error('Reset password error:', error);
     return res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 };
