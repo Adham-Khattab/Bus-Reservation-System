@@ -6,6 +6,8 @@
    (e.g. feedback.html -> feedback.css) to avoid merge conflicts.
    ========================================================= */
 
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
 :root {
     /* Color tokens */
     --color-accent: #F5821F;
@@ -18,7 +20,7 @@
     --color-card-shadow: rgba(0, 0, 0, 0.08);
 
     /* Type */
-    --font-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    --font-base: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
     /* Layout */
     --max-width: 1200px;
@@ -105,9 +107,9 @@ a {
 
 .site-footer .footer-links {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 24px;
     text-align: center;
     grid-column: 2;
 }
