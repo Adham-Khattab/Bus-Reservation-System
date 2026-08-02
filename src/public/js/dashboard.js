@@ -1,37 +1,4 @@
 /* ==========================================
-   PASSENGER COUNTER
-========================================== */
-
-const minusBtn = document.getElementById("minus");
-const plusBtn = document.getElementById("plus");
-const passengerCount = document.getElementById("passengerCount");
-
-let passengers = 1;
-
-passengerCount.textContent = passengers;
-
-plusBtn.addEventListener("click", () => {
-  passengers++;
-
-  passengerCount.textContent = passengers;
-});
-
-minusBtn.addEventListener("click", () => {
-  if (passengers > 1) {
-    passengers--;
-
-    passengerCount.textContent = passengers;
-
-    // Remove extra selected seats
-    const selectedSeats = document.querySelectorAll(".seat.selected");
-
-    if (selectedSeats.length > passengers) {
-      selectedSeats[selectedSeats.length - 1].classList.remove("selected");
-    }
-  }
-});
-
-/* ==========================================
    SEAT SELECTION
 ========================================== */
 
@@ -46,8 +13,8 @@ seats.forEach((seat) => {
     const selected = document.querySelectorAll(".seat.selected");
 
     if (!seat.classList.contains("selected")) {
-      if (selected.length >= passengers) {
-        alert("You cannot select more seats than passengers.");
+      if (selected.length >= employees.length) {
+        alert("You cannot select more seats than employees added.");
 
         return;
       }
@@ -57,17 +24,6 @@ seats.forEach((seat) => {
   });
 });
 
-document
-  .getElementById("travelDate")
-  .addEventListener("change", loadOccupiedSeats);
-
-document
-  .getElementById("pickupTime")
-  .addEventListener("change", loadOccupiedSeats);
-
-document.querySelectorAll('input[name="direction"]').forEach((radio) => {
-  radio.addEventListener("change", loadOccupiedSeats);
-});
 /* ==========================================
    EMPLOYEE TAGS
 ========================================== */
@@ -296,8 +252,6 @@ async function searchEmployees(search = "") {
   }
 }
 
-// console.log("Employees:", employeeSuggestions);
-
 /* ==========================================
    LOAD STATIONS
 ========================================== */
@@ -368,7 +322,7 @@ async function loadOccupiedSeats() {
     }
 
     document.querySelectorAll(".seat").forEach((seat) => {
-      const number = Number(seat.set.innerText);
+      const number = Number(seat.innerText);
 
       if (data.occupiedSeats.includes(number)) {
         seat.classList.add("occupied");
@@ -381,30 +335,6 @@ async function loadOccupiedSeats() {
   } catch (error) {
     console.error("Failed to load occupied seats:", error);
   }
-}
-
-/* ==========================================
-   SEAT EVENTS
-========================================== */
-
-function attachSeatEvents() {
-  seats.forEach((seat) => {
-    seat.addEventListener("click", () => {
-      if (seat.classList.contains("occupied")) {
-        return;
-      }
-
-      const selected = document.querySelectorAll(".seat.selected");
-
-      if (!seat.classList.contains("selected")) {
-        if (selected.length >= employees.length) {
-          alert("You cannot select more seats than passengers.");
-          return;
-        }
-      }
-      seat.classList.toggle("selected");
-    });
-  });
 }
 
 /* ==========================================
@@ -429,5 +359,4 @@ document.querySelectorAll("input[name='direction']").forEach((radio) => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadStations();
-  attachSeatEvents();
 });

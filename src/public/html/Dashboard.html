@@ -14,29 +14,15 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     />
 
-    <!-- <link rel="stylesheet" href="style.css"> -->
-    <link rel="stylesheet" href="./Dashboard.css" />
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/Dashboard.css" />
   </head>
 
   <body>
-    <header class="site-header">
-      <a href="Dashboard.html" class="logo">
-        <img src="images/logo.png" alt="All For One Group" class="logo-img" />
-      </a>
-      <nav>
-        <a href="Dashboard.html" class="active">Home</a>
-        <a href="calendar.html">Booking Calendar</a>
-        <a href="trip-history.html">Trip history</a>
-        <a href="lost-found.html">Lost &amp; found</a>
-      </nav>
-      <div class="header-right">
-        <span>English</span>
-        <span aria-hidden="true">&#128100;</span>
-      </div>
-    </header>
+    <div id="header-placeholder"></div>
 
     <section class="hero">
-      <img src="images/bus-background.jpeg" class="background" />
+      <img src="../images/bus-background.jpeg" class="background" />
 
       <div class="overlay">
         <h1>Welcome, USER 👋</h1>
@@ -74,27 +60,24 @@
 
           <label>Pick-up Station</label>
           <select id="station">
-            <option>Abu Qir</option>
-            <option>Mamoura</option>
-            <option>Montaza</option>
-            <option>Mandara</option>
-            <option>Asafra</option>
-            <option>Miami</option>
-            <option>Sidi Bishr</option>
-            <option>Mohamed Nagib</option>
-            <option>Victoria</option>
-            <option>Loran</option>
-            <option>Ganaklis</option>
-            <option>Gleem</option>
-            <option>Bokla</option>
-            <option>Roushdy</option>
-            <option>Mostafa Kamel</option>
-            <option>Sidi Gaber</option>
-            <option>Cleopatra</option>
-            <option>Sporting</option>
-            <option>Ibrahimya</option>
-            <option>Cleopatra</option>
-            <option>Cleopatra</option>
+            <option value="Mamoura">Mamoura</option>
+            <option value="Montaza">Montaza</option>
+            <option value="Mandara">Mandara</option>
+            <option value="Asafra">Asafra</option>
+            <option value="Miami">Miami</option>
+            <option value="Sidi Bishr">Sidi Bishr</option>
+            <option value="Mohamed Nagib">Mohamed Nagib</option>
+            <option value="Victoria">Victoria</option>
+            <option value="Loran">Loran</option>
+            <option value="Ganaklis">Ganaklis</option>
+            <option value="Gleem">Gleem</option>
+            <option value="Bokla">Bokla</option>
+            <option value="Roushdy">Roushdy</option>
+            <option value="Mostafa Kamel">Mostafa Kamel</option>
+            <option value="Sidi Gaber">Sidi Gaber</option>
+            <option value="Cleopatra">Cleopatra</option>
+            <option value="Sporting">Sporting</option>
+            <option value="Ibrahimya">Ibrahimya</option>
           </select>
 
           <label>Travel Date</label>
@@ -149,18 +132,9 @@
       </div>
     </section>
 
-    <footer class="site-footer">
-      <a href="Dashboard.html" class="logo">
-        <img src="images/logo.png" alt="All For One Group" class="logo-img" />
-      </a>
-      <div class="footer-links">
-        <a href="feedback.html">Feedback</a>
-        <a href="reviews.html">Reviews</a>
-        <a href="faq.html">FAQs</a>
-        <a href="report.html">Report</a>
-      </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
-    <script src="dashboard.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/dashboard.js"></script>
   </body>
 </html>

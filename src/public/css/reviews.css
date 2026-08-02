@@ -2,8 +2,8 @@
     background: var(--color-white);
     border-radius: var(--radius);
     box-shadow: 0 4px 24px var(--color-card-shadow);
-    padding: 40px 48px 44px;
-    max-width: 720px;
+    padding: 40px 40px 44px;
+    max-width: 520px;
     width: 100%;
     border: 1px solid #EFEFEF;
 }
@@ -14,6 +14,7 @@
     margin: 0 0 28px;
     text-align: center;
 }
+
 .reviews-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -23,10 +24,10 @@
 .review-item {
     border: 2px solid var(--color-text);
     border-radius: 999px / 40px;
-    padding: 18px 22px;
+    padding: 12px 14px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 10px;
 }
 
 .review-avatar {
@@ -85,36 +86,4 @@
     .reviews-grid {
         grid-template-columns: 1fr;
     }
-}
-
-footer{
-
-    margin-top: 160px;
-
-    background:#d9d9d9;
-    display:flex;
-    gap: 500px;
-    padding:30px;
-}
-
-
-.footer-logo img{
-
-    width:200px;
-
-}
-
-.footer-links{
-
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-
-}
-
-.footer-links a{
-
-    text-decoration:none;
-    color:black;
-
 }

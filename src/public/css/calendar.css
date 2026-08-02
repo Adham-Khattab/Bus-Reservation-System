@@ -1,0 +1,24 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #ffffff;
+}
+
+main {
+    padding: 40px;
+}
+
+.calendar-container {
+    background: white;
+    border: 3px solid #2196f3;
+    margin-top: 100px;
+}
+
+#calendar {
+    max-width: 100%;
+    margin: 100px;
+}
