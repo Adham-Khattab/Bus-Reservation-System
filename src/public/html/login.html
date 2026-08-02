@@ -27,7 +27,7 @@
 
             <p>Enjoy your ride</p>
 
-            <form action="/login" method="POST">
+            <form action="/api/auth/login" method="POST" id="loginForm">
 
                 <div class="input-box">
                     <i class="fa-regular fa-user"></i>
@@ -46,15 +46,13 @@
                         Remember Me
                     </label>
 
-                    <a href="/forgot-password" class="forgot-password">
+                    <a href="./forgot-password.html" class="forgot-password">
                         Forgot Password?
                     </a>
 
                 </div>
 
-
-
-
+                <p id="errorMsg" style="color:#5a0000; font-size:14px; margin-bottom:10px;"></p>
 
                 <button type="submit">
 
@@ -62,12 +60,17 @@
 
                 </button>
 
+               <p class="account-switch">
+                    Don't have an account?
+                    <a href="./sign-up.html" class="forgot-password">Sign Up</a>
+                </p>
             </form>
 
         </div>
 
     </div>
 
+<script src="../js/Login.js"></script>
 </body>
 
 </html>

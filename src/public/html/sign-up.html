@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bus Reservation Sign Up</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/login.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <img src="../images/bus-background.jpeg" class="bg-image">
+
+        <div class="login-card">
+
+            <h2>Create Account</h2>
+
+            <p>Join us for the ride</p>
+
+            <form action="/api/auth/sign-up" method="POST" id="signupForm" autocomplete="off">
+
+                <div class="input-box">
+                    <i class="fa-regular fa-user"></i>
+                    <input type="text" name="employeeName" placeholder="Enter your Full Name" autocomplete="off" required>
+                </div>
+
+                <div class="input-box">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" name="employeeEmail" placeholder="Enter your Email" autocomplete="new-password" required>
+                </div>
+
+                <div class="input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="employeePassword" placeholder="Enter your Password" autocomplete="new-password" required>
+                </div>
+
+                <div class="input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="confirmPassword" placeholder="Confirm your Password" autocomplete="new-password" required>
+                </div>
+
+                <p id="errorMsg" style="color:#5a0000; font-size:14px; margin-bottom:10px;"></p>
+
+                <p class="account-switch">
+                    Already have an account?
+                    <a href="./login.html" class="forgot-password">Log In</a>
+                </p>
+
+                <button type="submit">
+
+                    Sign Up
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="../js/sign-up.js"></script>
+
+</body>
+
+</html>
