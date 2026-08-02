@@ -12,14 +12,14 @@ const getEmployees = async (req, res) => {
       `
             SELECT
                 employee_id,
-                full_name
+                CONCAT(F_name, ' ', L_name) AS full_name
 
             FROM employees
 
-            WHERE LOWER(full_name)
+            WHERE LOWER(CONCAT(F_name, ' ', L_name))
             LIKE LOWER($1)
 
-            ORDER BY full_name
+            ORDER BY F_name, L_name
 
             LIMIT 20
             `,
@@ -82,9 +82,11 @@ const getBuses = async (req, res) => {
       `
             SELECT
                 bus_id,
-                bus_name,
+                bus_number,
                 license_plate,
-                total_seats
+                driver_name ,
+                driver_phone ,
+                capacity
 
             FROM buses
 
@@ -123,7 +125,7 @@ const getSeats = async (req, res) => {
 
     const busResult = await pool.query(
       `
-            SELECT total_seats
+            SELECT capacity
 
             FROM buses
 
@@ -139,7 +141,7 @@ const getSeats = async (req, res) => {
       });
     }
 
-    const totalSeats = busResult.rows[0].total_seats;
+    const totalSeats = busResult.rows[0].capacity;
 
     const seats = [];
 
@@ -182,15 +184,10 @@ const getOccupiedSeats = async (req, res) => {
             SELECT seat_number
 
             FROM reservations
-
             WHERE bus_id = $1
-
             AND travel_date = $2
-
             AND pickup_time = $3
-
             AND direction = $4
-
             ORDER BY seat_number
             `,
       [bus_id, travel_date, pickup_time, direction],
