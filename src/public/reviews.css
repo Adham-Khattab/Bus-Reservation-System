@@ -86,3 +86,35 @@
         grid-template-columns: 1fr;
     }
 }
+
+footer{
+
+    margin-top: 160px;
+
+    background:#d9d9d9;
+    display:flex;
+    gap: 500px;
+    padding:30px;
+}
+
+
+.footer-logo img{
+
+    width:200px;
+
+}
+
+.footer-links{
+
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+
+}
+
+.footer-links a{
+
+    text-decoration:none;
+    color:black;
+
+}

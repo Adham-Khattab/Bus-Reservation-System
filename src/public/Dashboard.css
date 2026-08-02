@@ -2,365 +2,241 @@
    GOOGLE FONT
 ========================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 /* ==========================================
    RESET
 ========================================== */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-html{
-    scroll-behavior:smooth;
+html {
+  scroll-behavior: smooth;
 }
 
-body{
-    background:#ece8f4;
-    color:#222;
+body {
+  background: #ece8f4;
+  color: #222;
 }
 
 /* ==========================================
    HEADER
 ========================================== */
 
-header{
-
-    position:fixed;
-
-    top:0;
-
-    left:0;
-
-    width:100%;
-
-    height:80px;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:0 60px;
-
-    background:#ffffff;
-
-    box-shadow:0 2px 12px rgba(0,0,0,.08);
-
-    z-index:1000;
-
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 60px;
+  background: #ffffff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
 }
 
-.logo{
-
-    display:flex;
-
-    align-items:center;
-
+.logo {
+  display: flex;
+  align-items: center;
 }
 
-.logo img{
-
-    width:130px;
-
-    height:auto;
-
-    object-fit:contain;
-
+.logo img {
+  width: 130px;
+  height: auto;
+  object-fit: contain;
 }
 
-nav ul{
-
-    display:flex;
-
-    list-style:none;
-
-    gap:40px;
-
+nav {
+  display: flex;
+  list-style: none;
+  gap: 40px;
 }
 
-nav ul li a{
-
-    text-decoration:none;
-
-    color:#444;
-
-    font-weight:500;
-
-    transition:.3s;
-
+nav a {
+  text-decoration: none;
+  color: #444;
+  font-weight: 500;
+  transition: 0.3s;
 }
 
-nav ul li a:hover{
-
-    color:#5d4d90;
-
+nav a:hover {
+  color: #ff7a1a;
 }
 
-nav ul li a.active{
-
-    color:#5d4d90;
-
-    font-weight:600;
-
+nav a.active {
+  color: #ff7a1a;
+  font-weight: 600;
 }
 
-.header-right{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
-.header-right span{
-
-    font-weight:500;
-
+.header-right span {
+  font-weight: 500;
 }
 
-.header-right i{
-
-    width:42px;
-
-    height:42px;
-
-    border-radius:50%;
-
-    background:#6f5ca6;
-
-    color:#fff;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    cursor:pointer;
-
+.header-right i {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #6f5ca6;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 /* ==========================================
    HERO
 ========================================== */
 
-.hero{
-
-    position:relative;
-
-    width:100%;
-
-    min-height:100vh;
-
-    margin-top:80px;
-
-    overflow:hidden;
-
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  margin-top: 80px;
+  overflow: hidden;
 }
 
-.background{
+.background {
+  width: 100%;
+  height: 100%;
+  /* height:calc(100vh - 80px); */
+  object-fit: cover;
 
-    width:100%;
-    height:100%;
-    /* height:calc(100vh - 80px); */
-
-    object-fit:cover;
-
-    display:block;
-
+  display: block;
 }
 
-.overlay{
-
-    position:absolute;
-
-    top:70px;
-
-    left:70px;
-
-    color:white;
-
+.overlay {
+  position: absolute;
+  top: 70px;
+  left: 70px;
+  color: white;
 }
 
-.overlay h1{
-
-    font-size:48px;
-
-    font-weight:700;
-
-    margin-bottom:10px;
-
+.overlay h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.overlay p{
-
-    font-size:22px;
-
+.overlay p {
+  font-size: 22px;
 }
 
 /* ==========================================
    BOOKING CARD
 ========================================== */
 
-.booking-card{
-    position:absolute;
-    /* height: auto; */
-    top:30px;
-    right:40px;
-    width:min(730px,90%);
-    min-height:400px;
-    display:flex;
-    gap:10px;
-    padding:30px;
-    background:rgba(255,255,255,.22);
-    backdrop-filter:blur(12px);
-    border-radius:25px;
-    border:2px solid rgba(255,255,255,.35);
-    box-shadow:0 15px 35px rgba(0,0,0,.18);
+.booking-card {
+  position: absolute;
+  /* height: auto; */
+  top: 80px;
+  right: 40px;
+  width: min(730px, 90%);
+  min-height: 400px;
+  display: flex;
+  gap: 10px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 25px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18);
 }
 
 /* ==========================================
    LEFT PANEL
 ========================================== */
 
-.left-side{
-
-    flex:1;
-
+.left-side {
+  flex: 1;
 }
 
-.left-side label{
-
-    display:block;
-
-    margin-top:18px;
-
-    margin-bottom:8px;
-
-    font-weight:600;
-
-    color:#2f2344;
-
+.left-side label {
+  display: block;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2f2344;
 }
 
-.employee-box{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
+.employee-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.employee-box input{
-
-    flex:1;
-
-    height:48px;
-
-    border:none;
-
-    outline:none;
-
-    border-radius:10px;
-
-    padding:0 15px;
-
-    font-size:15px;
-
-    background:#ffffff;
-
+.employee-box input {
+  flex: 1;
+  height: 48px;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  padding: 0 15px;
+  font-size: 15px;
+  background: #ffffff;
 }
 
-.employee-box button{
-
-    width:48px;
-
-    height:48px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#6c5a9e;
-
-    color:#fff;
-
-    cursor:pointer;
-
-    transition:.3s;
-
+.employee-box button {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 10px;
+  background: #6c5a9e;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.employee-box button:hover{
-
-    background:#59468b;
-
+.employee-box button:hover {
+  background: #59468b;
 }
 
-.selected-tags{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:8px;
-
-    margin-top:3px;
-
-    min-height:36px;
-
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 3px;
+  /* min-height:10px; */
 }
 
-.tag{
-
-    background:#6f5ca6;
-
-    color:white;
-
-    padding:6px 14px;
-
-    border-radius:30px;
-
-    font-size:12px;
-
+.tag {
+  background: #6f5ca6;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 12px;
 }
 
-.direction{
+.direction {
+  display: flex;
+  gap: 30px;
 
-    display:flex;
-
-    gap:30px;
-
-    /* margin-top:5px; */
-
+  /* margin-top:5px; */
 }
 
-.direction label{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    font-weight:500;
-
+.direction label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
 }
 
-.direction input{
-
-    transform:scale(1.2);
-
+.direction input {
+  transform: scale(1.2);
 }
 
 /* ==========================================
@@ -368,249 +244,169 @@ nav ul li a.active{
 ========================================== */
 
 select,
-input[type="date"]{
-
-    width:100%;
-
-    height:48px;
-
-    border:none;
-
-    outline:none;
-
-    border-radius:10px;
-
-    background:white;
-
-    padding:0 15px;
-
-    font-size:15px;
-
-    color:#333;
-
+input[type="date"] {
+  width: 100%;
+  height: 48px;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  background: white;
+  padding: 0 15px;
+  font-size: 15px;
+  color: #333;
 }
 
-.counter{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:18px;
-
-    margin-top:12px;
-
+.book-btn {
+  margin-top: 25px;
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: #5d4d90;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.counter button{
-
-    width:40px;
-
-    height:40px;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:#6f5ca6;
-
-    color:white;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-}
-
-.counter button:hover{
-
-    transform:scale(1.08);
-
-}
-
-#passengerCount{
-
-    font-size:20px;
-
-    font-weight:600;
-
-}
-
-.book-btn{
-
-    margin-top:20px;
-
-    width:100%;
-
-    height:52px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#5d4d90;
-
-    color:white;
-
-    font-size:18px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-}
-
-.book-btn:hover{
-
-    background:#47377a;
-
-    transform:translateY(-2px);
-
+.book-btn:hover {
+  background: #47377a;
+  transform: translateY(-2px);
 }
 /* ==========================================
    RIGHT PANEL
 ========================================== */
 
-.right-side{
-
-    flex:1;
-
+.right-side {
+  flex: 1;
+  /* margin-top: 100; */
 }
 
-.right-side h2{
-    margin-bottom:25px;
-    color:#2f2344;
-    font-size:26px;
-    font-weight:600;
-    text-align: center;
+.right-side h2 {
+  margin-bottom: 15px;
+  color: #2f2344;
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
 }
 
 /* ==========================================
    SEAT GRID
 ========================================== */
 
-.seat-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(3,65px);
-
-    gap:20px;
-
-    justify-content:center;
-
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 65px);
+  gap: 20px;
+  justify-content: center;
 }
 
-.seat{
-    width:60px;
-    height:60px;
-    border:none;
-    border-radius:15px;
-    background:#ffffff;
-    color:#333;
-    font-size:17px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
-    box-shadow:0 8px 20px rgba(0,0,0,.12);
+.seat {
+  width: 60px;
+  height: 54px;
+  border: none;
+  border-radius: 15px;
+  background: #ffffff;
+  color: #333;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.seat:hover{
-    transform:translateY(-4px);
-    background:#d9d2ef;
+.seat:hover {
+  transform: translateY(-4px);
+  background: #d9d2ef;
 }
 
-.seat.selected{
-    background:#6f5ca6;
-    color:white;
+.seat.selected {
+  background: #6f5ca6;
+  color: white;
 }
 
-.seat.occupied{
-    background:#9d9d9d;
-    color:white;
-    cursor:not-allowed;
+.seat.occupied {
+  background: #9d9d9d;
+  color: white;
+  cursor: not-allowed;
 }
 
-.seat.occupied:hover{
-    transform:none;
+.seat.occupied:hover {
+  transform: none;
 }
 
 /* ==========================================
    LEGEND
 ========================================== */
 
-.legend{
-    display:flex;
-    justify-content:center;
-    gap:25px;
-    flex-wrap:wrap;
-    margin-top: 20px;
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
 }
 
-.legend div{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:14px;
-    color:#333;
-    
+.legend div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
 }
 
-.box{
-    width:18px;
-    height:18px;
-    border-radius:5px;
-    /* margin-top: 20px; */
+.box {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  /* margin-top: 20px; */
 }
 
-.box.selected{
-    background:#6f5ca6;
-
+.box.selected {
+  background: #6f5ca6;
 }
 
-.box.available{
-    background:white;
-    border:1px solid #999;
-
+.box.available {
+  background: white;
+  border: 1px solid #999;
 }
 
-.box.occupied{
-    background:#9d9d9d;
+.box.occupied {
+  background: #9d9d9d;
 }
 
 /* ==========================================
    SCROLLBAR
 ========================================== */
 
-::-webkit-scrollbar{
-    width:8px;
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-::-webkit-scrollbar-track{
-    background:#ece8f4;
+::-webkit-scrollbar-track {
+  background: #ece8f4;
 }
 
-::-webkit-scrollbar-thumb{
-    background:#7a67b1;
-    border-radius:10px;
+::-webkit-scrollbar-thumb {
+  background: #7a67b1;
+  border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover{
-    background:#5f4b96;
+::-webkit-scrollbar-thumb:hover {
+  background: #5f4b96;
 }
 
 /* ==========================================
    BUTTON ANIMATION
 ========================================== */
 
-button{
-    transition:.3s ease;
+button {
+  transition: 0.3s ease;
 }
 
-button:active{
-    transform:scale(.96);
+button:active {
+  transform: scale(0.96);
 }
 
 /* ==========================================
@@ -618,10 +414,8 @@ button:active{
 ========================================== */
 
 input:focus,
-select:focus{
-
-    border:2px solid #6f5ca6;
-
+select:focus {
+  border: 2px solid #6f5ca6;
 }
 
 /* ==========================================
@@ -629,235 +423,176 @@ select:focus{
 ========================================== */
 
 select:hover,
-input:hover{
-
-    box-shadow:0 0 0 2px rgba(111,92,166,.2);
-
+input:hover {
+  box-shadow: 0 0 0 2px rgba(111, 92, 166, 0.2);
 }
 
-.employee-box input:hover{
-
-    box-shadow:0 0 0 2px rgba(111,92,166,.2);
-
+.employee-box input:hover {
+  box-shadow: 0 0 0 2px rgba(111, 92, 166, 0.2);
 }
 
 /* ==========================================
    GLASS EFFECT
 ========================================== */
 
-.booking-card::before{
+.booking-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.05)
+  );
 
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    border-radius:24px;
-
-    background:linear-gradient(
-        135deg,
-        rgba(255,255,255,.18),
-        rgba(255,255,255,.05)
-    );
-
-    pointer-events:none;
-
+  pointer-events: none;
 }
 
 /* ==========================================
    RESPONSIVE
 ========================================== */
 
-@media(max-width:1200px){
-
-.booking-card{
-
-    width:92%;
-
-    right:4%;
-
-    left:4%;
-
+@media (max-width: 1200px) {
+  .booking-card {
+    width: 92%;
+    right: 4%;
+    left: 4%;
+  }
 }
 
+@media (max-width: 950px) {
+  .booking-card {
+    flex-direction: column;
+    width: 92%;
+    padding: 30px;
+  }
+
+  .left-side,
+  .right-side {
+    width: 100%;
+  }
+
+  .right-side {
+    margin-top: 40px;
+  }
+
+  .overlay {
+    left: 30px;
+
+    top: 40px;
+  }
+
+  .overlay h1 {
+    font-size: 36px;
+  }
+
+  .overlay p {
+    font-size: 18px;
+  }
 }
 
-@media(max-width:950px){
+@media (max-width: 768px) {
+  header {
+    padding: 15px 20px;
+    flex-direction: column;
+    height: auto;
+  }
 
-.booking-card{
+  nav ul {
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
-    flex-direction:column;
+  .hero {
+    margin-top: 140px;
+  }
 
-    width:92%;
+  .background {
+    height: auto;
+    min-height: 700px;
+  }
 
-    padding:30px;
+  .booking-card {
+    position: relative;
+    top: 30px;
+    left: 0;
+    right: 0;
+    margin: 30px auto;
+  }
 
+  .overlay {
+    position: relative;
+    padding: 20px;
+  }
 }
 
-.left-side,
-.right-side{
+@media (max-width: 600px) {
+  .overlay h1 {
+    font-size: 28px;
+  }
 
-    width:100%;
+  .booking-card {
+    padding: 20px;
+  }
 
+  .seat-grid {
+    grid-template-columns: repeat(3, 60px);
+    gap: 12px;
+  }
+
+  .seat {
+    width: 60px;
+    height: 60px;
+    font-size: 16px;
+  }
+
+  .book-btn {
+    font-size: 16px;
+  }
 }
 
-.right-side{
+@media (max-width: 420px) {
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    margin-top:40px;
+  .header-right {
+    margin-top: 10px;
+  }
 
+  .seat-grid {
+    grid-template-columns: repeat(3, 55px);
+  }
+
+  .seat {
+    width: 55px;
+    height: 55px;
+  }
 }
 
-.overlay{
+.site-footer {
+  /* margin-top:600px; */
 
-    left:30px;
-
-    top:40px;
-
+  background: #d9d9d9;
+  display: flex;
+  gap: 400px;
+  padding: 30px;
 }
 
-.overlay h1{
-
-    font-size:36px;
-
+.footer-logo img {
+  width: 130px;
 }
 
-.overlay p{
-
-    font-size:18px;
-
+.footer-links {
+  display: flex;
+  /* flex-direction:column; */
+  gap: 50px;
+  justify-content: center;
 }
-
-}
-
-@media(max-width:768px){
-
-header{
-
-    padding:15px 20px;
-
-    flex-direction:column;
-
-    height:auto;
-
-}
-
-nav ul{
-
-    gap:18px;
-
-    flex-wrap:wrap;
-
-    justify-content:center;
-
-}
-
-.hero{
-
-    margin-top:140px;
-
-}
-
-.background{
-
-    height:auto;
-
-    min-height:700px;
-
-}
-
-.booking-card{
-
-    position:relative;
-
-    top:30px;
-
-    left:0;
-
-    right:0;
-
-    margin:30px auto;
-
-}
-
-.overlay{
-
-    position:relative;
-
-    padding:20px;
-
-}
-
-}
-
-@media(max-width:600px){
-
-.overlay h1{
-
-    font-size:28px;
-
-}
-
-.booking-card{
-
-    padding:20px;
-
-}
-
-.seat-grid{
-
-    grid-template-columns:repeat(3,60px);
-
-    gap:12px;
-
-}
-
-.seat{
-
-    width:60px;
-
-    height:60px;
-
-    font-size:16px;
-
-}
-
-.book-btn{
-
-    font-size:16px;
-
-}
-
-}
-
-@media(max-width:420px){
-
-nav ul{
-
-    flex-direction:column;
-
-    align-items:center;
-
-}
-
-.header-right{
-
-    margin-top:10px;
-
-}
-
-.seat-grid{
-
-    grid-template-columns:repeat(3,55px);
-
-}
-
-.seat{
-
-    width:55px;
-
-    height:55px;
-
-}
-
+.footer-links a {
+  text-decoration: none;
+  color: black;
 }
