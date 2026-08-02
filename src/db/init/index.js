@@ -21,4 +21,8 @@ module.exports = async (pool) => {
   }
 
   console.log(" Database initialized.");
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> fd9965231080241b29128e757e0ed84f03772686

@@ -6,6 +6,20 @@ const initDB = require("./src/db/init");
 
 const PORT = process.env.PORT || 3000;
 
+<<<<<<< HEAD
+initDB()
+  .then(() => {
+    console.log("Database connection successful");
+  })
+  .catch((err) => {
+    console.error("Failed to initialize database:");
+    console.error(err.message);
+  });
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
+=======
 const startServer = async () => {
   try {
     // Initialize database tables
@@ -28,3 +42,4 @@ const startServer = async () => {
 };
 
 startServer();
+>>>>>>> 7fe84ec415e32872edc0c74e576a61d842f1da4e

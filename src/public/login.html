@@ -9,8 +9,7 @@
 
     <title>Bus Reservation Login</title>
 
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <link rel="stylesheet" href="./login.css">
 
@@ -18,41 +17,56 @@
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <img src="images\bus-background.jpeg" class="bg-image">
+        <img src="images\bus-background.jpeg" class="bg-image">
 
-    <div class="login-card">
+        <div class="login-card">
 
-        <h2>Welcome Back !!</h2>
+            <h2>Welcome Back !!</h2>
 
-        <p>Enjoy your ride</p>
+            <p>Enjoy your ride</p>
 
-        <form action="/login" method="POST">
+            <form action="/login" method="POST">
 
-            <div class="input-box">
+                <div class="input-box">
+                    <i class="fa-regular fa-user"></i>
+                    <input type="email" name="employeeEmail" placeholder="Enter your Email" required>
+                </div>
 
-                <i class="fa-regular fa-user"></i>
+                <div class="input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="employeePassword" placeholder="Enter your Password" required>
+                </div>
 
-                <input
-                    type="text"
-                    name="employeeID"
-                    placeholder="Enter your Employee ID"
-                    required>
+                <div class="login-options">
 
-            </div>
+                    <label class="remember-me">
+                        <input type="checkbox" name="rememberMe">
+                        Remember Me
+                    </label>
 
-            <button type="submit">
+                    <a href="/forgot-password" class="forgot-password">
+                        Forgot Password?
+                    </a>
 
-                Log In
+                </div>
 
-            </button>
 
-        </form>
+
+
+
+                <button type="submit">
+
+                    Log In
+
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
-
-</div>
 
 </body>
 
