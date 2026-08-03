@@ -1,115 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trip Details — All For One Group</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/trip-detail.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/trip-detail.css" />
+  </head>
 
-<body>
+  <body>
+    <div id="header-placeholder"></div>
 
-<div id="header-placeholder"></div>
+    <section class="title">
+      <h1>Trip Details</h1>
+    </section>
 
-<section class="title">
-    <h1>Trip Details</h1>
-</section>
-
-<section class="trip-summary">
-
-    <div class="item">
+    <section class="trip-summary row row-cols-2 row-cols-md-4 g-3">
+      <div class="item col">
         <div class="icon-title">
-            <i class="fa-regular fa-calendar"></i>
-            <p>Date</p>
+          <i class="fa-regular fa-calendar"></i>
+          <p>Date</p>
         </div>
         <div class="value" id="tripDate"></div>
-    </div>
+      </div>
 
-    <div class="item">
+      <div class="item col">
         <div class="icon-title">
-            <i class="fa-regular fa-clock"></i>
-            <p>Time</p>
+          <i class="fa-regular fa-clock"></i>
+          <p>Time</p>
         </div>
         <div class="value" id="tripTime"></div>
-    </div>
+      </div>
 
-    <div class="item">
+      <div class="item col">
         <div class="icon-title">
-            <i class="fa-solid fa-location-dot"></i>
-            <p>Pick-up</p>
+          <i class="fa-solid fa-location-dot"></i>
+          <p>Pick-up</p>
         </div>
         <div class="value" id="pickup"></div>
-    </div>
+      </div>
 
-    <div class="item">
+      <div class="item col">
         <div class="icon-title">
-            <i class="fa-solid fa-route"></i>
-            <p>Drop-off</p>
+          <i class="fa-solid fa-route"></i>
+          <p>Drop-off</p>
         </div>
         <div class="value" id="dropoff"></div>
-    </div>
+      </div>
+    </section>
 
-</section>
-
-<section class="driver-details">
-
-    <div class="row">
+    <section class="driver-details">
+      <div class="row">
         <div class="left">
-            <i class="fa-solid fa-user"></i>
-            <div>
-                <h3>Driver's Name</h3>
-                <p>Driver assigned to your route</p>
-            </div>
+          <i class="fa-solid fa-user"></i>
+          <div>
+            <h3>Driver's Name</h3>
+            <p>Driver assigned to your route</p>
+          </div>
         </div>
         <div class="right" id="driverName"></div>
-    </div>
+      </div>
 
-    <div class="row">
+      <div class="row">
         <div class="left">
-            <i class="fa-solid fa-phone"></i>
-            <div>
-                <h3>Driver's Number</h3>
-                <p>Contact your driver directly</p>
-            </div>
+          <i class="fa-solid fa-phone"></i>
+          <div>
+            <h3>Driver's Number</h3>
+            <p>Contact your driver directly</p>
+          </div>
         </div>
         <div class="right" id="driverPhone"></div>
-    </div>
+      </div>
 
-    <div class="row">
+      <div class="row">
         <div class="left">
-            <i class="fa-solid fa-bus"></i>
-            <div>
-                <h3>Bus Number</h3>
-                <p>Your assigned bus</p>
-            </div>
+          <i class="fa-solid fa-bus"></i>
+          <div>
+            <h3>Bus Number</h3>
+            <p>Your assigned bus</p>
+          </div>
         </div>
         <div class="right" id="busNumber"></div>
-    </div>
+      </div>
 
-    <div class="row">
+      <div class="row">
         <div class="left">
-            <i class="fa-solid fa-chair"></i>
-            <div>
-                <h3>Seat Number</h3>
-                <p>Your assigned seat</p>
-            </div>
+          <i class="fa-solid fa-chair"></i>
+          <div>
+            <h3>Seat Number</h3>
+            <p>Your assigned seat</p>
+          </div>
         </div>
         <div class="right" id="seatNumber"></div>
-    </div>
+      </div>
+    </section>
 
-</section>
+    <section class="buttons">
+      <button id="cancelBtn">Cancel Trip</button>
+      <button id="rescheduleBtn">Reschedule</button>
+    </section>
 
-<section class="buttons">
-    <button id="cancelBtn">Cancel Trip</button>
-    <button id="rescheduleBtn">Reschedule</button>
-</section>
+    <div id="footer-placeholder"></div>
 
-<div id="footer-placeholder"></div>
-
-<script src="../js/components.js"></script>
-<script src="../js/trip-detail.js"></script>
-
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/trip-detail.js"></script>
+  </body>
 </html>
