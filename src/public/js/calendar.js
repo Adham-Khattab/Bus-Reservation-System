@@ -2,8 +2,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const calendarEl = document.getElementById('calendar');
 
-    // Check BOTH storages for the user object — don't guess based on whether
-    // 'token' exists, since that guess was silently failing before.
+    // Check BOTH storages for the user object
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
 
     if (!userData) {
@@ -23,11 +22,14 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         if (data.success) {
             events = data.reservations.map(trip => {
-                // travel_date comes back as an ISO date string, pickup_time as HH:MM:SS
+
+                // travel_date comes back as YYYY-MM-DD
+                // pickup_time comes back as HH:MM:SS
                 const datePart = trip.travel_date.slice(0, 10);
                 const start = `${datePart}T${trip.pickup_time}`;
+
                 const startDate = new Date(start);
-                const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour block
+                const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour duration
 
                 return {
                     title: `${trip.direction} — Bus ${trip.bus_number}`,
@@ -47,7 +49,14 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
 
+        // Show week view by default
         initialView: 'timeGridWeek',
+
+        // Open on today's date
+        initialDate: new Date(),
+
+        // Start the week on Monday
+        firstDay: 1,
 
         headerToolbar: {
             left: 'prev,next today',
