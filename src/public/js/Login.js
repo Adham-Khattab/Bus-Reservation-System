@@ -38,11 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Store the token (localStorage if Remember Me, sessionStorage otherwise)
+      // Store the token AND the user object (localStorage if Remember Me,
+      // sessionStorage otherwise) — other pages like the dashboard and
+      // calendar read `user` from storage to know who's logged in.
       if (rememberMe) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
       } else {
         sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('user', JSON.stringify(data.user));
       }
 
       // Redirect to the dashboard on success

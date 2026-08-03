@@ -16,8 +16,10 @@ const createReservation = async (req, res) => {
       time,
       direction,
       seats,
-      bus_id,
     } = req.body;
+    // Note: bus_id is no longer accepted from the client — the server
+    // looks up whichever bus is dedicated to the requested pickup_time
+    // and direction (see "FIND THE BUS ASSIGNED TO THIS TIME SLOT" below).
 
     // ==========================================
     // BASIC VALIDATION
@@ -88,20 +90,12 @@ const createReservation = async (req, res) => {
     }
 
     // ==========================================
-    // BUS
-    // ==========================================
-
-    const selectedBusId = bus_id || 1;
-
-    // ==========================================
-    // START TRANSACTION
+    // FIND THE BUS ASSIGNED TO THIS TIME SLOT
+    // Each bus is now dedicated to exactly one pickup_time + direction,
+    // so there's only ever one candidate bus per booking request.
     // ==========================================
 
     await client.query("BEGIN");
-
-    // ==========================================
-    // CHECK BUS
-    // ==========================================
 
     const busResult = await client.query(
       `
@@ -111,19 +105,45 @@ const createReservation = async (req, res) => {
 
                 FROM buses
 
-                WHERE bus_id = $1
+                WHERE pickup_time = $1
+                AND direction = $2
 
                 FOR UPDATE
                 `,
-
-      [selectedBusId],
+      [time, direction],
     );
 
     if (busResult.rows.length === 0) {
-      throw new Error("Bus not found");
+      throw new Error(
+        "No bus is assigned to this pickup time and direction",
+      );
     }
 
+    const selectedBusId = busResult.rows[0].bus_id;
     const totalSeats = busResult.rows[0].capacity;
+
+    const occupiedCountResult = await client.query(
+      `
+                SELECT COUNT(*)
+
+                FROM reservations
+
+                WHERE bus_id = $1
+                AND travel_date = $2
+                AND pickup_time = $3
+                AND direction = $4
+                `,
+      [selectedBusId, date, time, direction],
+    );
+
+    const occupiedCount = Number(occupiedCountResult.rows[0].count);
+    const freeSeats = totalSeats - occupiedCount;
+
+    if (freeSeats < employees.length) {
+      throw new Error(
+        "This bus is full for the selected date, time and direction",
+      );
+    }
 
     // ==========================================
     // CHECK STATION
@@ -280,16 +300,26 @@ const createReservation = async (req, res) => {
       message: "Reservation created successfully",
 
       reservationIds,
+
+      busId: selectedBusId,
     });
   } catch (error) {
     await client.query("ROLLBACK");
 
     console.error(error);
 
+    // Postgres error code 23505 = unique_violation. This happens when two
+    // people book the same seat at almost the same moment — one wins the
+    // race, and the loser hits the database's own safety net.
+    const message =
+      error.code === "23505"
+        ? "That seat was just booked by someone else. Please pick another seat."
+        : error.message;
+
     res.status(400).json({
       success: false,
 
-      message: error.message,
+      message,
     });
   } finally {
     client.release();
@@ -315,6 +345,8 @@ const getReservation = async (req, res) => {
                     b.bus_id,
                     b.bus_number,
                     b.license_plate,
+                    b.driver_name,
+                    b.driver_phone,
                     s.station_name,
                     r.travel_date,
                     r.pickup_time,
@@ -357,7 +389,59 @@ const getReservation = async (req, res) => {
     });
   }
 };
+// ==========================================
+// GET MY RESERVATIONS (for the calendar)
+// ==========================================
+
+const getMyReservations = async (req, res) => {
+  try {
+    const employeeId = Number(req.query.employee_id);
+
+    if (!employeeId) {
+      return res.status(400).json({
+        success: false,
+        message: "employee_id is required",
+      });
+    }
+
+    const result = await pool.query(
+      `
+                SELECT
+                    r.reservation_id,
+                    r.travel_date,
+                    r.pickup_time,
+                    r.direction,
+                    r.seat_number,
+                    s.station_name,
+                    b.bus_id,
+                    b.bus_number
+
+                FROM reservations r
+                JOIN stations s ON r.station_id = s.station_id
+                JOIN buses b ON r.bus_id = b.bus_id
+
+                WHERE r.employee_id = $1
+
+                ORDER BY r.travel_date, r.pickup_time
+                `,
+      [employeeId],
+    );
+
+    res.json({
+      success: true,
+      reservations: result.rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to load reservations",
+    });
+  }
+};
+
 module.exports = {
   createReservation,
   getReservation,
+  getMyReservations,
 };
