@@ -1,4 +1,126 @@
 /* ==========================================
+   GLOBAL VARIABLES
+========================================== */
+
+let employees = []; // Employees selected for booking
+let currentBusId = 1; // Temporary until bus selection is automatic
+
+const searchInput = document.getElementById("employeeSearch");
+const addEmployeeBtn = document.getElementById("addEmployee");
+const selectedEmployees = document.getElementById("selectedEmployees");
+const bookButton = document.getElementById("bookBtn");
+
+/* ==========================================
+   LOGGED-IN USER
+========================================== */
+
+document.addEventListener("DOMContentLoaded", async () => {
+  // Load logged in user
+  const storage = localStorage.getItem("token") ? localStorage : sessionStorage;
+
+  const userData = storage.getItem("user");
+
+  if (userData) {
+    const user = JSON.parse(userData);
+
+    const welcome = document.querySelector(".overlay h1");
+
+    welcome.textContent = `Welcome, ${user.F_name} 👋`;
+  }
+
+  await loadStations();
+
+  await loadOccupiedSeats();
+});
+
+/* ==========================================
+   EMPLOYEE SEARCH
+========================================== */
+
+async function searchEmployees(search) {
+  try {
+    const response = await fetch(
+      `/api/dashboard/employees?search=${encodeURIComponent(search)}`,
+    );
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    return data.employees;
+  } catch (error) {
+    console.error(error);
+
+    return [];
+  }
+}
+async function addEmployee() {
+  const search = searchInput.value.trim();
+
+  if (!search) {
+    alert("Enter an employee name.");
+    return;
+  }
+
+  const results = await searchEmployees(search);
+
+  if (results.length === 0) {
+    alert("Employee not found.");
+    return;
+  }
+
+  const employee = results[0];
+
+  const alreadyAdded = employees.find(
+    (emp) => emp.employee_id === employee.employee_id,
+  );
+
+  if (alreadyAdded) {
+    alert("Employee already selected.");
+    return;
+  }
+
+  employees.push({
+    employee_id: employee.employee_id,
+    full_name: employee.full_name,
+    seat_number: null,
+  });
+
+  const tag = document.createElement("div");
+  tag.className = "tag";
+  tag.dataset.employeeId = employee.employee_id;
+
+  tag.innerHTML = `
+        ${employee.full_name}
+        <span class="remove-tag">&times;</span>
+    `;
+
+  selectedEmployees.appendChild(tag);
+
+  tag.querySelector(".remove-tag").addEventListener("click", () => {
+    employees = employees.filter(
+      (emp) => emp.employee_id !== employee.employee_id,
+    );
+
+    tag.remove();
+    updateSeatAssignments();
+  });
+
+  searchInput.value = "";
+}
+
+addEmployeeBtn.addEventListener("click", addEmployee);
+
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    addEmployee();
+  }
+});
+
+/* ==========================================
    SEAT SELECTION
 ========================================== */
 
@@ -10,165 +132,110 @@ seats.forEach((seat) => {
       return;
     }
 
-    const selected = document.querySelectorAll(".seat.selected");
+    // Prevent selecting more seats than employees
+    const selectedSeats = document.querySelectorAll(".seat.selected");
 
-    if (!seat.classList.contains("selected")) {
-      if (selected.length >= employees.length) {
-        alert("You cannot select more seats than employees added.");
-
-        return;
-      }
+    if (
+      !seat.classList.contains("selected") &&
+      selectedSeats.length >= employees.length
+    ) {
+      alert("Select employees first.");
+      return;
     }
 
     seat.classList.toggle("selected");
+
+    // Update employee -> seat mapping
+    updateSeatAssignments();
   });
 });
 
 /* ==========================================
-   EMPLOYEE TAGS
+   ASSIGN SEATS TO EMPLOYEES
 ========================================== */
 
-const searchInput = document.getElementById("employeeSearch");
-const addEmployee = document.getElementById("addEmployee");
-const selectedEmployees = document.getElementById("selectedEmployees");
-
-let employees = [];
-
-async function addEmployeeTag() {
-  const name = searchInput.value.trim();
-
-  if (name === "") {
-    alert("Please enter an employee name.");
-
-    return;
-  }
-
-  if (employees.includes(name)) {
-    alert("Employee already added.");
-
-    return;
-  }
-
-  const results = await searchEmployees(name);
-
-  const exactEmployee = results.find(
-    (employee) => employee.full_name.toLowerCase() === name.toLowerCase(),
-  );
-
-  if (!exactEmployee) {
-    alert("Employee not found in database.");
-
-    return;
-  }
-
-  employees.push(exactEmployee.full_name);
-
-  const tag = document.createElement("div");
-
-  tag.className = "tag";
-
-  tag.innerHTML = `
-        ${exactEmployee.full_name}
-        <span class="remove-tag">&times;</span>
-    `;
-
-  selectedEmployees.appendChild(tag);
-
-  searchInput.value = "";
-
-  tag.querySelector(".remove-tag").addEventListener("click", () => {
-    employees = employees.filter((emp) => emp !== exactEmployee.full_name);
-
-    tag.remove();
-  });
-}
-addEmployee.addEventListener("click", addEmployeeTag);
-
-searchInput.addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-
-    addEmployeeTag();
-  }
-});
-
-/* ==========================================
-   BOOK BUTTON
-========================================== */
-
-const bookButton = document.querySelector(".book-btn");
-
-bookButton.addEventListener("click", async () => {
-  const station = document.getElementById("station").value;
-
-  const date = document.getElementById("travelDate").value;
-
-  const time = document.getElementById("pickupTime").value;
-
-  const directionElement = document.querySelector(
-    "input[name='direction']:checked",
-  );
-
-  const direction = directionElement.parentElement.innerText.trim();
-
-  const selectedSeats = [];
+function updateSeatAssignments() {
+  const selectedSeatNumbers = [];
 
   document.querySelectorAll(".seat.selected").forEach((seat) => {
-    selectedSeats.push(Number(seat.innerText));
+    selectedSeatNumbers.push(Number(seat.innerText));
   });
 
-  // ==========================================
+  employees.forEach((employee, index) => {
+    employee.seat_number = selectedSeatNumbers[index] || null;
+  });
+
+  console.log(employees);
+}
+
+/* ==========================================
+   BOOK RESERVATION
+========================================== */
+
+bookButton.addEventListener("click", async () => {
+  const stationSelect = document.getElementById("station");
+  const station_id = Number(stationSelect.value);
+
+  const travel_date = document.getElementById("travelDate").value;
+
+  const pickup_time = document.getElementById("pickupTime").value;
+
+  const direction = document.querySelector(
+    "input[name='direction']:checked",
+  ).value;
+
+  // ============================
   // VALIDATION
-  // ==========================================
+  // ============================
 
   if (employees.length === 0) {
     alert("Please add at least one employee.");
-
     return;
   }
 
-  if (date === "") {
-    alert("Please choose a travel date.");
-
+  if (!station_id) {
+    alert("Please select a pickup station.");
     return;
   }
 
-  if (selectedSeats.length !== employees.length) {
-    alert("Please select one seat for every employee.");
-
+  if (!travel_date) {
+    alert("Please select a travel date.");
     return;
   }
 
-  // ==========================================
-  // RESERVATION OBJECT
-  // ==========================================
+  if (!pickup_time) {
+    alert("Please select a pickup time.");
+    return;
+  }
+
+  const unassigned = employees.some((emp) => emp.seat_number === null);
+
+  if (unassigned) {
+    alert("Please select one seat for each employee.");
+    return;
+  }
+
+  // ============================
+  // REQUEST BODY
+  // ============================
 
   const reservation = {
-    employees: employees,
+    employees,
 
-    passengers: employees.length,
+    bus_id: currentBusId,
 
-    station: station,
+    station_id,
 
-    date: date,
+    direction,
 
-    time: time,
+    travel_date,
 
-    direction: direction,
-
-    seats: selectedSeats,
-
-    bus_id: 1,
+    pickup_time,
   };
 
   try {
     bookButton.disabled = true;
-
     bookButton.innerText = "Booking...";
-
-    // ==========================================
-    // SEND TO BACKEND
-    // ==========================================
 
     const response = await fetch("/api/reservations", {
       method: "POST",
@@ -183,74 +250,36 @@ bookButton.addEventListener("click", async () => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "Reservation failed");
+      throw new Error(data.message);
     }
-
-    // ==========================================
-    // SUCCESS
-    // ==========================================
 
     alert("Reservation created successfully!");
 
-    console.log("Reservation IDs:", data.reservationIds);
+    console.log(data);
 
-    // Clear employees
+    // ============================
+    // RESET PAGE
+    // ============================
 
     employees = [];
 
     selectedEmployees.innerHTML = "";
+    searchInput.value = "";
 
-    // Clear seats
-
-    document.querySelectorAll(".seat.selected").forEach((seat) => {
+    document.querySelectorAll(".seat").forEach((seat) => {
       seat.classList.remove("selected");
     });
 
-    // Refresh seats
-
     await loadOccupiedSeats();
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
 
-    alert("Booking failed: " + error.message);
+    alert(err.message);
   } finally {
     bookButton.disabled = false;
-
     bookButton.innerText = "Book Now!";
   }
 });
-
-/* ==========================================
-   MINIMUM DATE = TODAY
-========================================== */
-
-const today = new Date().toISOString().split("T")[0];
-
-document.getElementById("travelDate").setAttribute("min", today);
-
-/* ==========================================
-   LOAD EMPLOYEES FROM DATABASE
-========================================== */
-
-async function searchEmployees(search = "") {
-  try {
-    const response = await fetch(
-      `/api/dashboard/employees?search=${encodeURIComponent(search)}`,
-    );
-
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.message);
-    }
-
-    return data.employees;
-  } catch (error) {
-    console.error("Employee loading error:", error);
-
-    return [];
-  }
-}
 
 /* ==========================================
    LOAD STATIONS
@@ -260,6 +289,10 @@ async function loadStations() {
   try {
     const response = await fetch("/api/dashboard/stations");
 
+    if (!response.ok) {
+      throw new Error("Failed to load stations.");
+    }
+
     const data = await response.json();
 
     if (!data.success) {
@@ -268,52 +301,44 @@ async function loadStations() {
 
     const stationSelect = document.getElementById("station");
 
-    stationSelect.innerHTML = `<option value="">
-                Select station
-            </option>`;
+    stationSelect.innerHTML = `<option value="">Select Pickup Station</option>`;
 
     data.stations.forEach((station) => {
       const option = document.createElement("option");
 
-      option.value = station.station_name;
-
+      option.value = station.station_id;
       option.textContent = station.station_name;
 
       stationSelect.appendChild(option);
     });
   } catch (error) {
-    console.error("Failed to load stations:", error);
+    console.error(error);
+    alert("Unable to load stations.");
   }
 }
-
 /* ==========================================
    LOAD OCCUPIED SEATS
 ========================================== */
 
 async function loadOccupiedSeats() {
-  const date = document.getElementById("travelDate").value;
-
-  const time = document.getElementById("pickupTime").value;
-
-  const directionElement = document.querySelector(
+  const travel_date = document.getElementById("travelDate").value;
+  const pickup_time = document.getElementById("pickupTime").value;
+  const direction = document.querySelector(
     "input[name='direction']:checked",
-  );
+  ).value;
 
-  if (!date || !time || !directionElement) {
+  if (!travel_date || !pickup_time) {
     return;
   }
 
-  const direction = directionElement.parentElement.innerText.trim();
-
   try {
-    const url =
-      `/api/dashboard/occupied-seats` +
-      `?bus_id=1` +
-      `&travel_date=${encodeURIComponent(date)}` +
-      `&pickup_time=${encodeURIComponent(time)}` +
-      `&direction=${encodeURIComponent(direction)}`;
+    const response = await fetch(
+      `/api/dashboard/occupied-seats?bus_id=${currentBusId}&travel_date=${travel_date}&pickup_time=${pickup_time}&direction=${encodeURIComponent(direction)}`,
+    );
 
-    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Failed to load occupied seats.");
+    }
 
     const data = await response.json();
 
@@ -324,21 +349,22 @@ async function loadOccupiedSeats() {
     document.querySelectorAll(".seat").forEach((seat) => {
       const number = Number(seat.innerText);
 
+      seat.classList.remove("occupied");
+
       if (data.occupiedSeats.includes(number)) {
         seat.classList.add("occupied");
-
         seat.classList.remove("selected");
-      } else {
-        seat.classList.remove("occupied");
       }
     });
-  } catch (error) {
-    console.error("Failed to load occupied seats:", error);
+
+    updateSeatAssignments();
+  } catch (err) {
+    console.error(err);
   }
 }
 
 /* ==========================================
-   TRIP CHANGE EVENTS
+   RELOAD OCCUPIED SEATS
 ========================================== */
 
 document
@@ -351,12 +377,4 @@ document
 
 document.querySelectorAll("input[name='direction']").forEach((radio) => {
   radio.addEventListener("change", loadOccupiedSeats);
-});
-
-/* ==========================================
-   INITIALIZE DASHBOARD
-========================================== */
-
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadStations();
 });
