@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/Authcontroller');
 
-console.log("✅ authRoutes.js loaded");
+console.log("authRoutes.js loaded");
 
 router.post('/login', authController.Login);
 router.post('/sign-up', authController.Signup);
