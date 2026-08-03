@@ -8,13 +8,16 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    // Initialize database tables
-    await initDB(pool);
-    console.log(" Database initialized successfully.");
-
     // Test database connection
     await pool.query("SELECT NOW()");
     console.log(" Database connection successful.");
+
+    const dbName = await pool.query("SELECT current_database()");
+    console.log("Connected database:", dbName.rows[0].current_database);
+
+    // Initialize database tables
+    await initDB(pool);
+    console.log(" Database initialized successfully.");
 
     // Start server
     app.listen(PORT, () => {
