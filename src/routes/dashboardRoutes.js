@@ -36,7 +36,7 @@ router.get("/buses", getBuses);
 // SEATS
 // ==========================================
 
-router.get("/seats", getSeats);
+router.get("/seats/:busId", getSeats);
 
 // ==========================================
 // OCCUPIED SEATS
