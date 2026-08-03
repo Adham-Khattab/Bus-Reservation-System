@@ -3,7 +3,6 @@
 ========================================== */
 
 let employees = []; // Employees selected for booking
-let currentBusId = 1; // Temporary until bus selection is automatic
 
 const searchInput = document.getElementById("employeeSearch");
 const addEmployeeBtn = document.getElementById("addEmployee");
@@ -219,18 +218,27 @@ bookButton.addEventListener("click", async () => {
   // REQUEST BODY
   // ============================
 
+  // reservationController.js expects station NAME (not id), a "date"/"time"
+  // pair (not travel_date/pickup_time), a "seats" array, and a "passengers"
+  // count, with employees sent as plain full-name strings in the same order
+  // as their seats.
+  const stationName =
+    stationSelect.options[stationSelect.selectedIndex]?.textContent || "";
+
   const reservation = {
-    employees,
+    employees: employees.map((emp) => emp.full_name),
 
-    bus_id: currentBusId,
+    passengers: employees.length,
 
-    station_id,
+    seats: employees.map((emp) => emp.seat_number),
+
+    station: stationName,
 
     direction,
 
-    travel_date,
+    date: travel_date,
 
-    pickup_time,
+    time: pickup_time,
   };
 
   try {
@@ -275,6 +283,10 @@ bookButton.addEventListener("click", async () => {
     console.error(err);
 
     alert(err.message);
+
+    // Someone may have just taken the seat we thought was free —
+    // refresh so the grid reflects reality.
+    await loadOccupiedSeats();
   } finally {
     bookButton.disabled = false;
     bookButton.innerText = "Book Now!";
@@ -333,7 +345,7 @@ async function loadOccupiedSeats() {
 
   try {
     const response = await fetch(
-      `/api/dashboard/occupied-seats?bus_id=${currentBusId}&travel_date=${travel_date}&pickup_time=${pickup_time}&direction=${encodeURIComponent(direction)}`,
+      `/api/dashboard/occupied-seats?bus_id=1&travel_date=${travel_date}&pickup_time=${pickup_time}&direction=${encodeURIComponent(direction)}`,
     );
 
     if (!response.ok) {

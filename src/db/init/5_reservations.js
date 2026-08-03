@@ -19,12 +19,4 @@ module.exports = async (pool) => {
             CONSTRAINT unique_seat_per_trip UNIQUE (bus_id, travel_date, pickup_time, direction, seat_number)
         )
     `);
-
-    // Safety net: if "reservations" already existed from before the
-    // "direction" column was added to this file, CREATE TABLE IF NOT EXISTS
-    // above does nothing. This adds it on to any table that's missing it.
-    await pool.query(`
-        ALTER TABLE reservations
-        ADD COLUMN IF NOT EXISTS direction VARCHAR(20) NOT NULL DEFAULT 'To Office'
-    `);
 };
