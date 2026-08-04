@@ -4,6 +4,7 @@ const {
   createReservation,
   getReservation,
   getMyReservations,
+  cancelReservation,
 } = require("../controllers/reservationController");
 
 const router = express.Router();
@@ -27,5 +28,11 @@ router.get("/mine", getMyReservations);
 // ==========================================
 
 router.get("/:id", getReservation);
+
+// ==========================================
+// CANCEL RESERVATION (delete trip)
+// ==========================================
+
+router.delete("/:id", cancelReservation);
 
 module.exports = router;
