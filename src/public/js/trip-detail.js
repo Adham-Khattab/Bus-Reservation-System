@@ -56,14 +56,38 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.getElementById('busNumber').textContent = trip.bus_number;
     document.getElementById('seatNumber').textContent = trip.seat_number;
 
-    document.getElementById('cancelBtn').addEventListener('click', function () {
-        // TODO: wire this up once there's a cancel-reservation endpoint.
-        alert('Cancel isn\'t hooked up to the backend yet.');
-    });
+    const cancelBtn = document.getElementById('cancelBtn');
 
-    document.getElementById('rescheduleBtn').addEventListener('click', function () {
-        // TODO: wire this up once there's a reschedule flow.
-        window.location.href = `calendar.html?reschedule=${trip.reservation_id}`;
+    cancelBtn.addEventListener('click', async function () {
+        const confirmed = window.confirm('Are you sure you want to cancel this trip? This cannot be undone.');
+        if (!confirmed) return;
+
+        cancelBtn.disabled = true;
+        cancelBtn.textContent = 'Cancelling...';
+
+        try {
+            const response = await fetch(`/api/reservations/${trip.reservation_id}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+
+            if (!data.success) {
+                alert(data.message || 'Failed to cancel trip.');
+                cancelBtn.disabled = false;
+                cancelBtn.textContent = 'Cancel Trip';
+                return;
+            }
+
+            // Trip is gone from the DB — head back to the calendar,
+            // which will re-fetch reservations and the cancelled trip
+            // will no longer appear.
+            window.location.href = 'calendar.html?cancelled=1';
+        } catch (error) {
+            console.error('Failed to cancel trip:', error);
+            alert('Something went wrong cancelling this trip. Please try again.');
+            cancelBtn.disabled = false;
+            cancelBtn.textContent = 'Cancel Trip';
+        }
     });
 
 });

@@ -440,8 +440,54 @@ const getMyReservations = async (req, res) => {
   }
 };
 
+// ==========================================
+// CANCEL RESERVATION (delete trip)
+// ==========================================
+
+const cancelReservation = async (req, res) => {
+  try {
+    const reservationId = Number(req.params.id);
+
+    if (!reservationId) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid reservation id is required",
+      });
+    }
+
+    const result = await pool.query(
+      `
+                DELETE FROM reservations
+                WHERE reservation_id = $1
+                RETURNING reservation_id
+                `,
+      [reservationId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Reservation not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Reservation cancelled successfully",
+      reservationId: result.rows[0].reservation_id,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to cancel reservation",
+    });
+  }
+};
+
 module.exports = {
   createReservation,
   getReservation,
   getMyReservations,
+  cancelReservation,
 };

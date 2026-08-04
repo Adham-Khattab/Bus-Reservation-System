@@ -62,11 +62,19 @@
             <input
               type="password"
               name="employeePassword"
+              id="employeePassword"
               placeholder="Enter your Password"
               autocomplete="new-password"
+              minlength="8"
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}"
+              title="At least 8 characters, with an uppercase letter, a lowercase letter, a number, and a special character."
               required
             />
           </div>
+
+          <p id="passwordHint" style="color: #666; font-size: 13px; margin: -8px 0 12px 2px;">
+            Must be 8+ characters and include an uppercase letter, a lowercase letter, a number, and a special character.
+          </p>
 
           <div class="input-box">
             <i class="fa-solid fa-lock"></i>
