@@ -16,10 +16,8 @@ const createReservation = async (req, res) => {
       time,
       direction,
       seats,
+      bus_number,
     } = req.body;
-    // Note: bus_id is no longer accepted from the client — the server
-    // looks up whichever bus is dedicated to the requested pickup_time
-    // and direction (see "FIND THE BUS ASSIGNED TO THIS TIME SLOT" below).
 
     // ==========================================
     // BASIC VALIDATION
@@ -89,61 +87,45 @@ const createReservation = async (req, res) => {
       });
     }
 
+    if (!bus_number) {
+      return res.status(400).json({
+        success: false,
+
+        message: "Bus number is required",
+      });
+    }
+
     // ==========================================
-    // FIND THE BUS ASSIGNED TO THIS TIME SLOT
-    // Each bus is now dedicated to exactly one pickup_time + direction,
-    // so there's only ever one candidate bus per booking request.
+    // START TRANSACTION
     // ==========================================
 
     await client.query("BEGIN");
 
+    // ==========================================
+    // CHECK BUS
+    // ==========================================
+
     const busResult = await client.query(
       `
                 SELECT
-                    bus_id,
+                    bus_number,
                     capacity
 
                 FROM buses
 
-                WHERE pickup_time = $1
-                AND direction = $2
+                WHERE bus_number = $1
 
                 FOR UPDATE
                 `,
-      [time, direction],
+
+      [bus_number],
     );
 
     if (busResult.rows.length === 0) {
-      throw new Error(
-        "No bus is assigned to this pickup time and direction",
-      );
+      throw new Error("Bus not found");
     }
 
-    const selectedBusId = busResult.rows[0].bus_id;
     const totalSeats = busResult.rows[0].capacity;
-
-    const occupiedCountResult = await client.query(
-      `
-                SELECT COUNT(*)
-
-                FROM reservations
-
-                WHERE bus_id = $1
-                AND travel_date = $2
-                AND pickup_time = $3
-                AND direction = $4
-                `,
-      [selectedBusId, date, time, direction],
-    );
-
-    const occupiedCount = Number(occupiedCountResult.rows[0].count);
-    const freeSeats = totalSeats - occupiedCount;
-
-    if (freeSeats < employees.length) {
-      throw new Error(
-        "This bus is full for the selected date, time and direction",
-      );
-    }
 
     // ==========================================
     // CHECK STATION
@@ -226,7 +208,7 @@ const createReservation = async (req, res) => {
                 SELECT
                     seat_number
                 FROM reservations
-                WHERE bus_id = $1
+                WHERE bus_number = $1
                 AND travel_date = $2
                 AND pickup_time = $3
                 AND direction = $4
@@ -234,7 +216,7 @@ const createReservation = async (req, res) => {
                     ANY($5::int[])
                 `,
 
-      [selectedBusId, date, time, direction, seatNumbers],
+      [bus_number, date, time, direction, seatNumbers],
     );
 
     if (occupiedResult.rows.length > 0) {
@@ -256,7 +238,7 @@ const createReservation = async (req, res) => {
         `
                     INSERT INTO reservations (
                         employee_id,
-                        bus_id,
+                        bus_number,
                         station_id,
                         travel_date,
                         pickup_time,
@@ -277,7 +259,7 @@ const createReservation = async (req, res) => {
                     `,
         [
           employeeIds[i],
-          selectedBusId,
+          bus_number,
           stationId,
           date,
           time,
@@ -300,26 +282,16 @@ const createReservation = async (req, res) => {
       message: "Reservation created successfully",
 
       reservationIds,
-
-      busId: selectedBusId,
     });
   } catch (error) {
     await client.query("ROLLBACK");
 
     console.error(error);
 
-    // Postgres error code 23505 = unique_violation. This happens when two
-    // people book the same seat at almost the same moment — one wins the
-    // race, and the loser hits the database's own safety net.
-    const message =
-      error.code === "23505"
-        ? "That seat was just booked by someone else. Please pick another seat."
-        : error.message;
-
     res.status(400).json({
       success: false,
 
-      message,
+      message: error.message,
     });
   } finally {
     client.release();
@@ -342,7 +314,6 @@ const getReservation = async (req, res) => {
                     e.employee_id,
                     e.F_name,
                     e.L_name,
-                    b.bus_id,
                     b.bus_number,
                     b.license_plate,
                     b.driver_name,
@@ -358,8 +329,8 @@ const getReservation = async (req, res) => {
                     ON r.employee_id =
                        e.employee_id
                 JOIN buses b
-                    ON r.bus_id =
-                       b.bus_id
+                    ON r.bus_number =
+                       b.bus_number
 
                 JOIN stations s
                     ON r.station_id =
@@ -392,6 +363,10 @@ const getReservation = async (req, res) => {
 // ==========================================
 // GET MY RESERVATIONS (for the calendar)
 // ==========================================
+// NOTE: this currently reads the employee via ?employee_id= in the query
+// string. If you have JWT auth middleware that sets req.user, swap
+// req.query.employee_id below for req.user.id instead so it can't be
+// spoofed by changing the URL.
 
 const getMyReservations = async (req, res) => {
   try {
@@ -408,20 +383,17 @@ const getMyReservations = async (req, res) => {
       `
                 SELECT
                     r.reservation_id,
+                    r.bus_number,
+                    s.station_name,
                     r.travel_date,
                     r.pickup_time,
                     r.direction,
                     r.seat_number,
-                    s.station_name,
-                    b.bus_id,
-                    b.bus_number
-
+                    r.reservation_date
                 FROM reservations r
-                JOIN stations s ON r.station_id = s.station_id
-                JOIN buses b ON r.bus_id = b.bus_id
-
+                JOIN stations s
+                    ON r.station_id = s.station_id
                 WHERE r.employee_id = $1
-
                 ORDER BY r.travel_date, r.pickup_time
                 `,
       [employeeId],
@@ -441,26 +413,15 @@ const getMyReservations = async (req, res) => {
 };
 
 // ==========================================
-// CANCEL RESERVATION (delete trip)
+// CANCEL RESERVATION
 // ==========================================
 
 const cancelReservation = async (req, res) => {
   try {
     const reservationId = Number(req.params.id);
 
-    if (!reservationId) {
-      return res.status(400).json({
-        success: false,
-        message: "A valid reservation id is required",
-      });
-    }
-
     const result = await pool.query(
-      `
-                DELETE FROM reservations
-                WHERE reservation_id = $1
-                RETURNING reservation_id
-                `,
+      `DELETE FROM reservations WHERE reservation_id = $1 RETURNING *`,
       [reservationId],
     );
 
@@ -474,7 +435,6 @@ const cancelReservation = async (req, res) => {
     res.json({
       success: true,
       message: "Reservation cancelled successfully",
-      reservationId: result.rows[0].reservation_id,
     });
   } catch (error) {
     console.error(error);
@@ -485,9 +445,28 @@ const cancelReservation = async (req, res) => {
   }
 };
 
-module.exports = {
+const controllerExports = {
   createReservation,
   getReservation,
   getMyReservations,
   cancelReservation,
 };
+
+// ==========================================
+// SAFETY CHECK
+// If this file (or a require path pointing at a *different* copy of
+// this file elsewhere in the project) ever ends up missing one of the
+// four handlers below, this will throw a clear error immediately on
+// startup instead of the vague Express "argument handler must be a
+// function" error.
+// ==========================================
+for (const [name, fn] of Object.entries(controllerExports)) {
+  if (typeof fn !== "function") {
+    throw new Error(
+      `reservationController.js: "${name}" is not a function (got ${typeof fn}). ` +
+        `Check that it is defined above and spelled correctly in module.exports.`,
+    );
+  }
+}
+
+module.exports = controllerExports;
