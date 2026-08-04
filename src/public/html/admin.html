@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — All For One Group</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <main class="page-main admin-main">
+      <h1>Admin Panel</h1>
+
+      <section class="admin-section">
+        <h2>Buses</h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="busesTable">
+            <thead>
+              <tr>
+                <th>Bus Number</th>
+                <th>License Plate</th>
+                <th>Driver Name</th>
+                <th>Driver Phone</th>
+                <th>Capacity</th>
+                <th>Pickup Time</th>
+                <th>Direction</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="busesTableBody"></tbody>
+          </table>
+        </div>
+
+        <h3>Add Bus</h3>
+        <form id="addBusForm" class="admin-form">
+          <input type="text" id="busNumber" placeholder="Bus number" required />
+          <input type="text" id="licensePlate" placeholder="License plate" />
+          <input type="text" id="driverName" placeholder="Driver name" />
+          <input type="text" id="driverPhone" placeholder="Driver phone" />
+          <input
+            type="number"
+            id="capacity"
+            placeholder="Capacity"
+            required
+            min="1"
+          />
+          <input type="time" id="pickupTime" />
+          <select id="direction">
+            <option value="">Direction (optional)</option>
+            <option value="To Office">To Office</option>
+            <option value="From Office">From Office</option>
+          </select>
+          <button type="submit" class="btn-primary">Add Bus</button>
+        </form>
+        <p class="admin-status" id="busStatus"></p>
+      </section>
+
+      <section class="admin-section">
+        <h2>Drivers</h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="driversTable">
+            <thead>
+              <tr>
+                <th>Driver Name</th>
+                <th>Driver Phone</th>
+                <th>Assigned Bus</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="driversTableBody"></tbody>
+          </table>
+        </div>
+        <p class="admin-hint">
+          Driver info lives on the bus record above — to add a driver, add or
+          fill in the bus they're assigned to. "Remove" clears the driver from
+          that bus without deleting the bus itself.
+        </p>
+      </section>
+
+      <section class="admin-section">
+        <h2>Reservations</h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="reservationsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Employee</th>
+                <th>Bus Number</th>
+                <th>Station</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Direction</th>
+                <th>Seat</th>
+              </tr>
+            </thead>
+            <tbody id="reservationsTableBody"></tbody>
+          </table>
+        </div>
+        <p class="admin-status" id="reservationsStatus"></p>
+      </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/components.js"></script>
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

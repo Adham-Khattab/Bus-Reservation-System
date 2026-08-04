@@ -1,0 +1,89 @@
+.admin-main {
+  display: block;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.admin-main h1 {
+  margin-bottom: 30px;
+  color: var(--color-accent, #f5821f);
+}
+
+.admin-section {
+  margin-bottom: 50px;
+}
+
+.admin-section h2 {
+  margin-bottom: 12px;
+}
+
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.admin-table th {
+  background: var(--color-bar, #e8e8e8);
+  font-weight: 600;
+}
+
+.admin-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.admin-form input,
+.admin-form select {
+  padding: 10px 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  flex: 1 1 160px;
+}
+
+.admin-status {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.admin-status.success {
+  color: #1e9e4a;
+}
+
+.admin-status.error {
+  color: #d33;
+}
+
+.admin-hint {
+  font-size: 13px;
+  color: var(--color-text-muted, #555);
+}
+
+@media (max-width: 640px) {
+  .admin-main {
+    padding: 20px;
+  }
+
+  .admin-form input,
+  .admin-form select,
+  .admin-form button {
+    flex: 1 1 100%;
+  }
+}
