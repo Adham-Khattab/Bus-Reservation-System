@@ -86,7 +86,9 @@ const getBuses = async (req, res) => {
                 license_plate,
                 driver_name ,
                 driver_phone ,
-                capacity
+                capacity,
+                pickup_time,
+                direction
 
             FROM buses
 

@@ -3,6 +3,7 @@
 ========================================== */
 
 let employees = []; // Employees selected for booking
+let buses = []; // All buses, each dedicated to one pickup_time + direction
 
 const searchInput = document.getElementById("employeeSearch");
 const addEmployeeBtn = document.getElementById("addEmployee");
@@ -29,8 +30,55 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await loadStations();
 
+  await loadBuses();
+
   await loadOccupiedSeats();
 });
+
+/* ==========================================
+   LOAD BUSES (so we know which bus is assigned
+   to the currently selected pickup time + direction)
+========================================== */
+
+async function loadBuses() {
+  try {
+    const response = await fetch("/api/dashboard/buses");
+
+    if (!response.ok) {
+      throw new Error("Failed to load buses.");
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    buses = data.buses;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/* ==========================================
+   RESOLVE THE BUS FOR THE CURRENTLY SELECTED
+   PICKUP TIME + DIRECTION
+========================================== */
+
+function getCurrentBusId() {
+  const pickup_time = document.getElementById("pickupTime").value;
+  const direction = document.querySelector(
+    "input[name='direction']:checked",
+  ).value;
+
+  // pickup_time from buses comes back as "HH:MM:SS" from Postgres —
+  // compare on the "HH:MM" prefix so it matches the <select> value.
+  const bus = buses.find(
+    (b) => b.pickup_time?.slice(0, 5) === pickup_time && b.direction === direction,
+  );
+
+  return bus ? bus.bus_id : null;
+}
 
 /* ==========================================
    EMPLOYEE SEARCH
@@ -343,9 +391,20 @@ async function loadOccupiedSeats() {
     return;
   }
 
+  const bus_id = getCurrentBusId();
+
+  if (!bus_id) {
+    // No bus is assigned to this pickup time + direction combo —
+    // nothing to mark as occupied, and booking will fail server-side too.
+    document.querySelectorAll(".seat").forEach((seat) => {
+      seat.classList.remove("occupied");
+    });
+    return;
+  }
+
   try {
     const response = await fetch(
-      `/api/dashboard/occupied-seats?bus_id=1&travel_date=${travel_date}&pickup_time=${pickup_time}&direction=${encodeURIComponent(direction)}`,
+      `/api/dashboard/occupied-seats?bus_id=${bus_id}&travel_date=${travel_date}&pickup_time=${pickup_time}&direction=${encodeURIComponent(direction)}`,
     );
 
     if (!response.ok) {
