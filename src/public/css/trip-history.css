@@ -5,87 +5,172 @@
 }
 
 body {
-    background: #ffffff;
+    background: #faf9f8;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    font-family: var(--font-base, 'Segoe UI', system-ui, sans-serif);
 }
+
+/* ===================== SEARCH ===================== */
 
 .search {
     display: flex;
     justify-content: center;
-    margin: 25px 0;
+    margin: 32px 0 28px;
+    padding: 0 20px;
 }
 
 .search-box {
-    width: 600px;
-    height: 45px;
-    border: 2px solid black;
+    width: 100%;
+    max-width: 600px;
+    height: 52px;
+    background: #ffffff;
+    border: 2px solid #e3e0dd;
     border-radius: 30px;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 22px;
+    gap: 12px;
+    transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+.search-box:focus-within {
+    border-color: #ff7a1a;
+    box-shadow: 0 0 0 4px rgba(255, 122, 26, 0.12);
 }
 
 .search-box input {
     width: 100%;
     border: none;
     outline: none;
-    font-size: 26px;
-    font-family: var(--font-base);
+    background: transparent;
+    font-size: 20px;
+    font-family: inherit;
     font-weight: 500;
+    color: #222;
+}
+
+.search-box input::placeholder {
+    color: #a8a4a0;
 }
 
 .search-box i {
-    font-size: 22px;
+    font-size: 18px;
+    color: #a8a4a0;
+    transition: color .25s ease;
 }
+
+.search-box:focus-within i {
+    color: #ff7a1a;
+}
+
+/* ===================== TRIP GRID ===================== */
 
 .trip-container {
     width: 95%;
-    margin: auto;
+    max-width: 1200px;
+    margin: 10px auto 60px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 22px;
+    flex: 1;
 }
 
+/* ===================== TRIP CARD ===================== */
+
 .trip-card {
-    background: #d9d9d9;
+    background: #ffffff;
+    border: 1px solid #ececec;
     border-radius: 18px;
-    padding: 20px;
+    padding: 26px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 2px 10px rgba(20, 20, 20, 0.05);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.trip-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(20, 20, 20, 0.09);
 }
 
 .left {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 22px;
 }
 
 .left p {
-    font-size: 26px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #7a7672;
+    letter-spacing: .02em;
 }
 
 .right {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 22px;
+    align-items: flex-end;
 }
 
 .value {
-    width: 170px;
-    min-height: 32px;
+    min-width: 130px;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 34px;
     background: #fdecec;
+    color: #b13a3a;
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    padding: 4px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
 }
+
+/* ===================== EMPTY STATE ===================== */
 
 .no-trips {
     grid-column: 1/-1;
     text-align: center;
-    padding: 50px;
-    font-size: 25px;
+    padding: 70px 20px;
+    font-size: 20px;
+    color: #948f8a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 500px) {
+    .trip-card {
+        padding: 20px;
+    }
+
+    .left p {
+        font-size: 15px;
+    }
+
+    .value {
+        font-size: 14px;
+        min-width: 100px;
+        padding: 4px 14px;
+    }
+
+    .search-box {
+        height: 46px;
+        padding: 0 16px;
+    }
+
+    .search-box input {
+        font-size: 17px;
+    }
 }

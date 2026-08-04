@@ -24,6 +24,7 @@ exports.getTripHistory = async (req, res) => {
              FROM reservations r
              JOIN buses b ON b.bus_id = r.bus_id
              WHERE r.employee_id = $1
+             AND r.travel_date < CURRENT_DATE
              ORDER BY r.travel_date DESC, r.pickup_time DESC`,
       [employee_id],
     );
