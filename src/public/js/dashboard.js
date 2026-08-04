@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const welcome = document.querySelector(".overlay h1");
 
-    welcome.textContent = `Welcome, ${user.F_name} 👋`;
+   welcome.textContent = `Welcome, ${user.f_name} 👋`;
   }
 
   await loadStations();
