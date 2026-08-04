@@ -10,8 +10,21 @@ document.addEventListener("DOMContentLoaded", () => {
     .then((res) => res.text())
     .then((html) => {
       document.getElementById("footer-placeholder").innerHTML = html;
+      attachLogoutHandler();
     });
 });
+
+function attachLogoutHandler() {
+  const logoutLink = document.getElementById("logoutLink");
+  if (!logoutLink) return;
+
+  logoutLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
+    window.location.href = "login.html";
+  });
+}
 
 function showAdminLinkIfApplicable() {
   const userJson =
