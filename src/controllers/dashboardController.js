@@ -81,16 +81,17 @@ const getBuses = async (req, res) => {
     const result = await pool.query(
       `
             SELECT
-                bus_id,
                 bus_number,
                 license_plate,
                 driver_name ,
                 driver_phone ,
-                capacity
+                capacity,
+                pickup_time,
+                direction
 
             FROM buses
 
-            ORDER BY bus_id
+            ORDER BY bus_number
             `,
     );
 
@@ -114,12 +115,12 @@ const getBuses = async (req, res) => {
 
 const getSeats = async (req, res) => {
   try {
-    const busId = Number(req.query.bus_id);
+    const busNumber = req.query.bus_number;
 
-    if (!busId) {
+    if (!busNumber) {
       return res.status(400).json({
         success: false,
-        message: "bus_id is required",
+        message: "bus_number is required",
       });
     }
 
@@ -129,9 +130,9 @@ const getSeats = async (req, res) => {
 
             FROM buses
 
-            WHERE bus_id = $1
+            WHERE bus_number = $1
             `,
-      [busId],
+      [busNumber],
     );
 
     if (busResult.rows.length === 0) {
@@ -169,13 +170,14 @@ const getSeats = async (req, res) => {
 
 const getOccupiedSeats = async (req, res) => {
   try {
-    const { bus_id, travel_date, pickup_time, direction } = req.query;
+    const { bus_number, travel_date, pickup_time, direction } = req.query;
 
-    if (!bus_id || !travel_date || !pickup_time || !direction) {
+    if (!bus_number || !travel_date || !pickup_time || !direction) {
       return res.status(400).json({
         success: false,
 
-        message: "bus_id, travel_date, pickup_time and direction are required",
+        message:
+          "bus_number, travel_date, pickup_time and direction are required",
       });
     }
 
@@ -184,13 +186,13 @@ const getOccupiedSeats = async (req, res) => {
             SELECT seat_number
 
             FROM reservations
-            WHERE bus_id = $1
+            WHERE bus_number = $1
             AND travel_date = $2
             AND pickup_time = $3
             AND direction = $4
             ORDER BY seat_number
             `,
-      [bus_id, travel_date, pickup_time, direction],
+      [bus_number, travel_date, pickup_time, direction],
     );
 
     res.json({

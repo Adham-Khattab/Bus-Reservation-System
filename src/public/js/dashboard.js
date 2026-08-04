@@ -225,6 +225,13 @@ bookButton.addEventListener("click", async () => {
   const stationName =
     stationSelect.options[stationSelect.selectedIndex]?.textContent || "";
 
+  // NOTE: bus_number was missing here, which is why the backend
+  // rejected the request with "Bus number is required". loadOccupiedSeats()
+  // below already hardcodes bus_id=1 for the seat grid, so this app
+  // currently assumes a single bus. Using the same "1" here keeps the
+  // booking request consistent with the seat-availability check.
+  // If you add support for multiple buses later, replace this with a
+  // real bus selector value instead of the hardcoded "1".
   const reservation = {
     employees: employees.map((emp) => emp.full_name),
 
@@ -239,6 +246,8 @@ bookButton.addEventListener("click", async () => {
     date: travel_date,
 
     time: pickup_time,
+
+    bus_number: 1,
   };
 
   try {
