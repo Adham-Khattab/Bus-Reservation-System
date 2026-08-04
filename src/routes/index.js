@@ -19,4 +19,5 @@ router.use("/trips", require("./tripRoutes"));
 router.use("/trip-history", require("./tripHistoryRoutes"));
 router.use("/calendar", require("./calendarRoutes"));
 router.use("/auth", require("./Authroutes"));
+router.use("/admin", require("./adminRoutes"));
 module.exports = router;
