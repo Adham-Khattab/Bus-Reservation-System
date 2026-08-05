@@ -15,7 +15,7 @@ router.use("/reservations", require("./reservationRoutes"));
 router.use("/lost-found", require("./lostFoundRoutes"));
 router.use("/feedback", require("./feedbackRoutes"));
 router.use("/report", require("./reportRoutes"));
-router.use("/trips", require("./tripRoutes"));
+router.use("/trips", require("./TripRoutes"));
 router.use("/trip-history", require("./tripHistoryRoutes"));
 router.use("/calendar", require("./calendarRoutes"));
 router.use("/auth", require("./Authroutes"));
