@@ -30,14 +30,35 @@ body {
 }
 
 /* ==========================================
+   HEADER OVERRIDE — DASHBOARD ONLY
+   style.css sets .site-header's background site-wide.
+   This selector is more specific (ID + class beats a
+   plain class), so it wins only on pages that load
+   this file — the header stays whatever style.css says
+   everywhere else.
+========================================== */
+
+#header-placeholder .site-header {
+  background: #ffffff !important;
+}
+
+/* ==========================================
    HERO
+   Changed from a fixed-height absolute-positioning
+   container to a flex container: its height now grows
+   to fit the booking card's real content instead of
+   clipping at exactly 100vh, which is what was pushing
+   the card down into the footer.
 ========================================== */
 
 .hero {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  padding: 110px 40px 60px;
 }
 
 .background {
@@ -51,30 +72,36 @@ body {
 
 .overlay {
   position: absolute;
-  top: 70px;
-  left: 70px;
+  top: 90px;
+  left: 60px;
+  max-width: 45%;
   color: white;
   z-index: 1;
 }
 
 .overlay h1 {
-  font-size: 48px;
+  font-size: clamp(24px, 4vw, 48px);
   font-weight: 700;
   margin-bottom: 10px;
+  line-height: 1.15;
 }
 
 .overlay p {
-  font-size: 22px;
+  font-size: clamp(14px, 1.6vw, 22px);
 }
 
 /* ==========================================
    BOOKING CARD
+   No longer position:absolute — it's a normal flex
+   child now, pushed to the right with margin-left:auto.
+   Its height is driven by its own content, so the hero
+   (and therefore the whole page) grows to fit it instead
+   of the card spilling past the hero's bottom edge.
 ========================================== */
 
 .booking-card {
-  position: absolute;
-  top: 80px;
-  right: 40px;
+  position: relative;
+  margin-left: auto;
   width: min(730px, 90%);
   min-height: 400px;
   display: flex;
@@ -384,15 +411,28 @@ input:hover {
 @media (max-width: 1200px) {
   .booking-card {
     width: 92%;
-    right: 4%;
-    left: 4%;
   }
 }
 
 @media (max-width: 950px) {
+  .hero {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 140px 20px 40px;
+  }
+
+  .overlay {
+    position: relative;
+    top: 0;
+    left: 0;
+    max-width: 100%;
+    margin-bottom: 30px;
+  }
+
   .booking-card {
     flex-direction: column;
-    width: 92%;
+    width: 100%;
+    margin-left: 0;
     padding: 30px;
   }
 
@@ -404,45 +444,9 @@ input:hover {
   .right-side {
     margin-top: 40px;
   }
-
-  .overlay {
-    left: 30px;
-    top: 40px;
-  }
-
-  .overlay h1 {
-    font-size: 36px;
-  }
-
-  .overlay p {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero {
-    margin-top: 20px;
-  }
-
-  .booking-card {
-    position: relative;
-    top: 30px;
-    left: 0;
-    right: 0;
-    margin: 30px auto;
-  }
-
-  .overlay {
-    position: relative;
-    padding: 20px;
-  }
 }
 
 @media (max-width: 600px) {
-  .overlay h1 {
-    font-size: 28px;
-  }
-
   .booking-card {
     padding: 20px;
   }
