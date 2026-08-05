@@ -149,6 +149,11 @@ body {
 }
 
 @media(max-width:900px) {
+    .title h1 {
+        padding: 14px 60px;
+        font-size: 36px;
+    }
+
     .trip-summary {
         flex-direction: column;
         gap: 35px;
@@ -168,5 +173,37 @@ body {
     .buttons {
         flex-direction: column;
         align-items: center;
+    }
+}
+
+@media (max-width: 500px) {
+    .title {
+        margin: 24px 0;
+        padding: 0 16px;
+    }
+
+    .title h1 {
+        width: 100%;
+        text-align: center;
+        padding: 12px 24px;
+        font-size: 26px;
+        border-radius: 20px;
+    }
+
+    .icon-title p {
+        font-size: 18px;
+    }
+
+    .left h3 {
+        font-size: 20px;
+    }
+
+    .left p {
+        font-size: 15px;
+    }
+
+    .buttons button {
+        width: 100%;
+        padding: 14px 20px;
     }
 }

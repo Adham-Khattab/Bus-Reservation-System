@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const welcome = document.querySelector(".overlay h1");
 
-   welcome.textContent = `Welcome, ${user.f_name} 👋`;
+    welcome.textContent = `Welcome, ${user.f_name} 👋`;
   }
 
   await loadStations();
@@ -63,9 +63,14 @@ async function loadBuses() {
 /* ==========================================
    RESOLVE THE BUS FOR THE CURRENTLY SELECTED
    PICKUP TIME + DIRECTION
+   NOTE: buses are keyed by bus_number (string),
+   not bus_id — the backend no longer returns
+   bus_id at all (see dashboardController.js
+   getBuses), so we resolve and use bus_number
+   everywhere on the frontend too.
 ========================================== */
 
-function getCurrentBusId() {
+function getCurrentBusNumber() {
   const pickup_time = document.getElementById("pickupTime").value;
   const direction = document.querySelector(
     "input[name='direction']:checked",
@@ -77,7 +82,7 @@ function getCurrentBusId() {
     (b) => b.pickup_time?.slice(0, 5) === pickup_time && b.direction === direction,
   );
 
-  return bus ? bus.bus_id : null;
+  return bus ? bus.bus_number : null;
 }
 
 /* ==========================================
@@ -262,6 +267,16 @@ bookButton.addEventListener("click", async () => {
     return;
   }
 
+  // Resolve the real bus for this pickup time + direction instead of
+  // hardcoding one. If no bus covers this slot, bail out before hitting
+  // the server (it would reject with "Bus not found" anyway).
+  const bus_number = getCurrentBusNumber();
+
+  if (!bus_number) {
+    alert("No bus is available for the selected time and direction.");
+    return;
+  }
+
   // ============================
   // REQUEST BODY
   // ============================
@@ -273,13 +288,6 @@ bookButton.addEventListener("click", async () => {
   const stationName =
     stationSelect.options[stationSelect.selectedIndex]?.textContent || "";
 
-  // NOTE: bus_number was missing here, which is why the backend
-  // rejected the request with "Bus number is required". loadOccupiedSeats()
-  // below already hardcodes bus_id=1 for the seat grid, so this app
-  // currently assumes a single bus. Using the same "1" here keeps the
-  // booking request consistent with the seat-availability check.
-  // If you add support for multiple buses later, replace this with a
-  // real bus selector value instead of the hardcoded "1".
   const reservation = {
     employees: employees.map((emp) => emp.full_name),
 
@@ -295,7 +303,7 @@ bookButton.addEventListener("click", async () => {
 
     time: pickup_time,
 
-    bus_number: 1,
+    bus_number,
   };
 
   try {
@@ -400,9 +408,9 @@ async function loadOccupiedSeats() {
     return;
   }
 
-  const bus_id = getCurrentBusId();
+  const bus_number = getCurrentBusNumber();
 
-  if (!bus_id) {
+  if (!bus_number) {
     // No bus is assigned to this pickup time + direction combo —
     // nothing to mark as occupied, and booking will fail server-side too.
     document.querySelectorAll(".seat").forEach((seat) => {
@@ -413,7 +421,7 @@ async function loadOccupiedSeats() {
 
   try {
     const response = await fetch(
-      `/api/dashboard/occupied-seats?bus_id=${bus_id}&travel_date=${travel_date}&pickup_time=${pickup_time}&direction=${encodeURIComponent(direction)}`,
+      `/api/dashboard/occupied-seats?bus_number=${encodeURIComponent(bus_number)}&travel_date=${travel_date}&pickup_time=${pickup_time}&direction=${encodeURIComponent(direction)}`,
     );
 
     if (!response.ok) {
