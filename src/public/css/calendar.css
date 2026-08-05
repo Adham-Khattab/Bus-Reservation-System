@@ -22,3 +22,36 @@ main {
     max-width: 100%;
     margin: 100px;
 }
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+    main {
+        padding: 24px;
+    }
+
+    .calendar-container {
+        margin-top: 60px;
+    }
+
+    #calendar {
+        margin: 40px;
+    }
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 12px;
+    }
+
+    .calendar-container {
+        margin-top: 30px;
+        border-width: 2px;
+    }
+
+    #calendar {
+        margin: 16px 8px;
+    }
+}
