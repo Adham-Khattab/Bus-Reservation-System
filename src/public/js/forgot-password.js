@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = form.elements['employeeEmail'].value.trim();
+    const email = form.elements['employeeEmail'].value.trim().toLowerCase();
 
     errorMsg.textContent = '';
     successMsg.textContent = '';

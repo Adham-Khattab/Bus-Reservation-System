@@ -5,10 +5,15 @@ const { sendOtpEmail } = require("../utils/mailer"); // adjust path if you place
 
 const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
 
+const normalizeEmail = (email) =>
+  typeof email === "string" ? email.trim().toLowerCase() : "";
+
 // POST /auth/login
 exports.Login = async (req, res) => {
   try {
-    const { email, password, rememberMe } = req.body;
+    const email = normalizeEmail(req.body.email);
+    const password = req.body.password;
+    const rememberMe = req.body.rememberMe;
 
     if (!email || !password) {
       return res
@@ -16,9 +21,9 @@ exports.Login = async (req, res) => {
         .json({ message: "Email and password are required." });
     }
 
-    // Fetch employee by email
+    // Fetch employee by email in a case-insensitive way
     const result = await pool.query(
-      "SELECT * FROM employees WHERE email = $1",
+      "SELECT * FROM employees WHERE LOWER(email) = $1",
       [email],
     );
 
@@ -63,7 +68,9 @@ exports.Login = async (req, res) => {
 // POST /auth/signup
 exports.Signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const name = req.body.name;
+    const email = normalizeEmail(req.body.email);
+    const password = req.body.password;
 
     if (!name || !email || !password) {
       return res
@@ -88,7 +95,7 @@ exports.Signup = async (req, res) => {
 
     // Check if an employee with this email already exists
     const existing = await pool.query(
-      "SELECT employee_id FROM employees WHERE email = $1",
+      "SELECT employee_id FROM employees WHERE LOWER(email) = $1",
       [email],
     );
 
@@ -130,14 +137,14 @@ exports.Signup = async (req, res) => {
 // POST /auth/forgot-password
 exports.ForgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = normalizeEmail(req.body.email);
 
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
 
     const result = await pool.query(
-      "SELECT employee_id FROM employees WHERE email = $1",
+      "SELECT employee_id FROM employees WHERE LOWER(email) = $1",
       [email],
     );
 
@@ -149,7 +156,7 @@ exports.ForgotPassword = async (req, res) => {
       const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
 
       await pool.query(
-        "UPDATE employees SET reset_otp = $1, reset_otp_expires = $2 WHERE email = $3",
+        "UPDATE employees SET reset_otp = $1, reset_otp_expires = $2 WHERE LOWER(email) = $3",
         [otp, expires, email],
       );
 
@@ -170,7 +177,9 @@ exports.ForgotPassword = async (req, res) => {
 // POST /auth/reset-password
 exports.ResetPassword = async (req, res) => {
   try {
-    const { email, otp, newPassword } = req.body;
+    const email = normalizeEmail(req.body.email);
+    const otp = req.body.otp;
+    const newPassword = req.body.newPassword;
 
     if (!email || !otp || !newPassword) {
       return res
@@ -193,7 +202,7 @@ exports.ResetPassword = async (req, res) => {
     }
 
     const result = await pool.query(
-      "SELECT reset_otp, reset_otp_expires FROM employees WHERE email = $1",
+      "SELECT reset_otp, reset_otp_expires FROM employees WHERE LOWER(email) = $1",
       [email],
     );
 
@@ -217,7 +226,7 @@ exports.ResetPassword = async (req, res) => {
 
     // Update the password and clear the OTP fields so it can't be reused
     await pool.query(
-      "UPDATE employees SET password = $1, reset_otp = NULL, reset_otp_expires = NULL WHERE email = $2",
+      "UPDATE employees SET password = $1, reset_otp = NULL, reset_otp_expires = NULL WHERE LOWER(email) = $2",
       [hashedPassword, email],
     );
 

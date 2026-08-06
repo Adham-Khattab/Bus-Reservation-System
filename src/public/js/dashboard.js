@@ -15,6 +15,13 @@ const bookButton = document.getElementById("bookBtn");
 ========================================== */
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const rawUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+
+  if (!rawUser) {
+    window.location.href = "./login.html";
+    return;
+  }
+
   // Load logged in user
   const storage = localStorage.getItem("token") ? localStorage : sessionStorage;
 
