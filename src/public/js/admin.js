@@ -5,12 +5,17 @@
 (() => {
   const userJson =
     localStorage.getItem("user") || sessionStorage.getItem("user");
-  const email = userJson
-    ? (JSON.parse(userJson).email || "").toLowerCase()
-    : "";
+
+  if (!userJson) {
+    window.location.href = "./login.html";
+    return;
+  }
+
+  const email = (JSON.parse(userJson).email || "").toLowerCase();
 
   if (!email.includes("admin")) {
     window.location.href = "./Dashboard.html";
+    return;
   }
 })();
 

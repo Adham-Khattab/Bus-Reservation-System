@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = form.elements['employeeEmail'].value.trim();
+    const email = form.elements['employeeEmail'].value.trim().toLowerCase();
     const otp = form.elements['otp'].value.trim();
     const newPassword = form.elements['newPassword'].value;
     const confirmPassword = form.elements['confirmPassword'].value;

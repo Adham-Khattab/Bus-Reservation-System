@@ -6,6 +6,10 @@ const app = express();
 // Parse JSON bodies
 app.use(express.json());
 
+app.get(["/dashboard.html", "/Dashboard.html"], (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "html", "Dashboard.html"));
+});
+
 // Serve static files from /public
 app.use(express.static(path.join(__dirname, "public")));
 

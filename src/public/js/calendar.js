@@ -6,9 +6,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
 
     if (!userData) {
-        console.error('No logged-in user found — cannot load reservations.');
-        console.log('DEBUG localStorage keys:', Object.keys(localStorage));
-        console.log('DEBUG sessionStorage keys:', Object.keys(sessionStorage));
+        console.warn('No logged-in user found — redirecting to login.');
+        window.location.href = './login.html';
         return;
     }
 

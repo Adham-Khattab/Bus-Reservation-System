@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const employeeId = user ? user.employee_id : null;
 
   if (!employeeId) {
-    tripContainer.innerHTML = "<p>Please log in to view your trip history.</p>";
+    window.location.href = './login.html';
     return;
   }
 
