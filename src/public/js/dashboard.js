@@ -313,6 +313,23 @@ bookButton.addEventListener("click", async () => {
     bus_number,
   };
 
+  const reservationDetails = employees
+    .map((emp) => `${emp.full_name} — Seat ${emp.seat_number}`)
+    .join("\n");
+
+  const confirmMessage = `Confirm reservation:\n\n` +
+    `Station: ${stationName}\n` +
+    `Date: ${travel_date}\n` +
+    `Time: ${pickup_time}\n` +
+    `Direction: ${direction}\n` +
+    `Bus number: ${bus_number}\n` +
+    `Passengers: ${employees.length}\n\n` +
+    `Seat assignments:\n${reservationDetails}`;
+
+  if (!window.confirm(confirmMessage)) {
+    return;
+  }
+
   try {
     bookButton.disabled = true;
     bookButton.innerText = "Booking...";
