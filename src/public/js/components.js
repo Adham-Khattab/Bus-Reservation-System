@@ -50,6 +50,13 @@ function attachLogoutHandler() {
 
   logoutLink.addEventListener("click", (event) => {
     event.preventDefault();
+
+    const confirmed = window.confirm(
+      "Are you sure you want to log out?"
+    );
+
+    if (!confirmed) return;
+
     localStorage.removeItem("user");
     sessionStorage.removeItem("user");
     window.location.href = "login.html";
